@@ -56,6 +56,22 @@ public class ProviderServices {
 		return providers;
 	}
 	
+	public static boolean updateProvider(Provider p) {
+		
+		String sql = "UPDATE FROM Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.execute();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
 	public static boolean deleteProvider(Provider p) {
 		
 		String sql = "DELETE FROM Provider WHERE( id = "+p.getId()+");";
