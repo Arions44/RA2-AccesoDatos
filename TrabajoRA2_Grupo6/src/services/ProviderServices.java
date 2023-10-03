@@ -12,9 +12,10 @@ import models.Provider;
 
 public class ProviderServices {
 
+	static ResultSet resultSet = null;
+	
 	public static boolean insertProvider(Provider p) {
 		
-		ResultSet resultSet = null;
 		String sql = "INSERT INTO Provider VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', \'"+p.getAddress()+"\', \'"+p.getPhone()+"\');";
 		try {
 			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
@@ -32,7 +33,6 @@ public class ProviderServices {
 	public static ArrayList<Provider> selectProvider(String field, Object value){
 		
 		ArrayList<Provider> providers = new ArrayList<Provider>();
-		ResultSet resultSet = null;
 		String sql = "SELECT * FROM Provider";
 		if(field == null) {
 			sql += ";";
@@ -56,9 +56,24 @@ public class ProviderServices {
 		return providers;
 	}
 	
+	public static boolean deleteProvider(Provider p) {
+		
+		String sql = "DELETE FROM Provider WHERE( id = "+p.getId()+");";
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.execute();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
 	public static int getNextId() {
 		
-		ResultSet resultSet = null;
 		int id = 0;
 		String sql = "SELECT MAX(id) FROM Provider;";
 		try {
