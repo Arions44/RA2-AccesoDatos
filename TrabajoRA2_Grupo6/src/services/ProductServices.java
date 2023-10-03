@@ -74,4 +74,37 @@ public class ProductServices {
 		return products;
 	}
 	
+	public static boolean deleteProduct(Product p) {
+		
+		String sql = "DELETE FROM Product WHERE( id = "+p.getId()+");";
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.execute();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean updateProduct(Product p) {
+		
+		String sql = "UPDATE FROM Product SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()
+			+"\', price = "+p.getPrice()+", category = \'"+p.getCategory()+"\', image = \'"+p.getImage()+"\', stock = "+p.getStock() 
+			+", id_provider = "+p.getId_provider()+" WHERE id = "+p.getId();
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.execute();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
 }
