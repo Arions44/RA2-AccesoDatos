@@ -36,8 +36,10 @@ public class ProviderServices {
 		String sql = "SELECT * FROM Provider";
 		if(field == null) {
 			sql += ";";
-		}else{
+		}else if(field.equalsIgnoreCase("id")){
 			sql += " WHERE(" + field + " = " + value +");";
+		}else {
+			sql += " WHERE(" + field + " = \'" + value +"\');";
 		}
 		try {
 			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
