@@ -1,22 +1,39 @@
 package models;
 
-import java.time.LocalDate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 import services.TradingService;
 
 public class Trading {
 	private int id, id_product, id_provider, amount;
-	private LocalDate date; 
+	private Date date; 
 	private String type;
-	public Trading(int id_product, int id_provider, int amount, LocalDate date, String type) {
+	public Trading(int id_product, int id_provider, int amount, String type) {
 		super();
 		this.id = TradingService.getNextId();
 		this.id_product = id_product;
 		this.id_provider = id_provider;
 		this.amount = amount;
-		this.date = date;
+		this.date = new Date();
 		this.type = type;
 	}
+	
+	public Trading(int id, int id_product, int id_provider, int amount, String date,  String type) {
+		super();
+		this.id = id;
+		this.id_product = id_product;
+		this.id_provider = id_provider;
+		this.amount = amount;
+		try {
+			this.date = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		this.type = type;
+	}
+	
 	public Trading() {
 		super();
 	}
@@ -44,10 +61,10 @@ public class Trading {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	public LocalDate getDate() {
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(LocalDate date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	public String getType() {
