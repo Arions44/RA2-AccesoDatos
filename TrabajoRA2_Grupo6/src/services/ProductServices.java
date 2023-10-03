@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import models.Product;
+import models.Provider;
 
 public class ProductServices {
 	
@@ -42,6 +44,34 @@ public class ProductServices {
 			e.printStackTrace();
 		}
 		return id+1;
+	}
+	
+	
+	public static ArrayList<Product> selectProduct(String field, Object value){
+		
+		ArrayList<Product> products = new ArrayList<Product>();
+		ResultSet resultSet = null;
+		String sql = "SELECT * FROM Product";
+		if(field == null) {
+			sql += ";";
+		}else if(field.equalsIgnoreCase("id")){
+			sql += " WHERE(" + field + " = " + value +");";
+		}else {
+			sql += " WHERE(" + field + " = \'" + value +"\');";
+		}
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()) {
+				products.add(new Product(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getFloat(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8)));
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return products;
 	}
 	
 }

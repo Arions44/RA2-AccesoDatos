@@ -23,6 +23,19 @@ public class Product {
 		this.stock = stock;
 		this.id_provider = id_provider;
 	}
+	
+	public Product(int id, String name, String description, float price, String category, String image, int stock,
+			int id_provider) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.category = category;
+		this.image = image;
+		this.stock = stock;
+		this.id_provider = id_provider;
+	}
 
 	public int getId() {
 		return id;
