@@ -17,7 +17,7 @@ public class TradingService {
 		int id = -1;
 		String sql = "SELECT MAX(id) FROM Trading;";
 		try {
-			Connection cnn = DriverManager.getConnection(AzureSql.cnnString);
+			Connection cnn = DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement = cnn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			resultSet.next();
@@ -32,7 +32,7 @@ public class TradingService {
 		String sql = "INSERT INTO Trading VALUES("+t.getId()+", "+t.getId_product()+", "+t.getId_provider()
 		+", "+t.getAmount()+", \'"+t.getDate().getYear()+"-"+t.getDate().getMonthValue()+"-"+t.getDate().getDayOfMonth()+"\', \'"+t.getType()+"\');";
 		try {
-			Connection cnn = DriverManager.getConnection(AzureSql.cnnString);
+			Connection cnn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = cnn.prepareStatement(sql);
 			statement.execute();
 			return true;

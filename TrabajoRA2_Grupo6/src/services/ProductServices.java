@@ -17,7 +17,7 @@ public class ProductServices {
 		String sql="INSERT INTO Product VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', "+p.getPrice()
 				+", \'"+p.getCategory()+"\', \'"+p.getImage()+"\', "+p.getStock()+", "+p.getId_provider()+");";
 		try {
-			Connection conn=DriverManager.getConnection(AzureSql.cnnString);
+			Connection conn=DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement=conn.prepareStatement(sql);
 			statement.execute();
 			return true;
@@ -33,7 +33,7 @@ public class ProductServices {
 		int id=0;
 		String sql="SELECT MAX(id)FROM Product;";
 		try {
-			Connection conn=DriverManager.getConnection(AzureSql.cnnString);
+			Connection conn=DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement=conn.createStatement();
 			resultSet=statement.executeQuery(sql);
 			resultSet.next();
