@@ -8,14 +8,11 @@ import java.sql.Statement;
 
 public class AzureSql {
 	
-	private static Connection cnn = null;
-	private static String userName = "Grupo6";
-	private static String passW = "AccesoDatos@";
-	private static String cnnString = 
+	public static String cnnString =
 			"jdbc:sqlserver://sql-server-ra2.database.windows.net;"
-			+ "database=RA2_Grupo6;"
-			+ "user="+ userName+";"
-			+"password="+passW+";"
+			+"database=RA2_Grupo6;"
+			+"user=Grupo6;"
+			+"password=AccesoDatos@;"
 			+"encrypt=true;"
 			+"trustServerCertificate=false;"
 			+"loginTimeout=30;";
