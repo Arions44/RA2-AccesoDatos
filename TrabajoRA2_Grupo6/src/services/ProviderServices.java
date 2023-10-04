@@ -14,25 +14,24 @@ public class ProviderServices {
 
 	static ResultSet resultSet = null;
 	
-	public static boolean insertProvider(Provider p) {
+	public static boolean insertProvider(Provider p) { //Insert into table by a given provider
 		
 		String sql = "INSERT INTO Provider VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', \'"+p.getAddress()+"\', \'"+p.getPhone()+"\');";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.execute();
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString()); //Connection to database
+			PreparedStatement statement = conn.prepareStatement(sql); //Prepare sql query
+			statement.execute(); //Execution of the prepared query
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
 		
 	}
 	
-	public static ArrayList<Provider> selectProvider(String field, Object value){
+	public static ArrayList<Provider> selectProvider(String field, Object value){ //Return provider by a given field and value when filtered or return every provider when parameters are null
 		
-		ArrayList<Provider> providers = new ArrayList<Provider>();
+		ArrayList<Provider> providers = new ArrayList<>();
 		String sql = "SELECT * FROM Provider";
 		if(field == null) {
 			sql += ";";
@@ -50,13 +49,12 @@ public class ProviderServices {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return providers;
 	}
 	
-	public static boolean updateProvider(Provider p) {
+	public static boolean updateProvider(Provider p) { //Update provider
 		
 		String sql = "UPDATE Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
 		try {
@@ -65,14 +63,13 @@ public class ProviderServices {
 			statement.execute();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
 		
 	}
 	
-	public static boolean deleteProvider(Provider p) {
+	public static boolean deleteProvider(Provider p) { //Delete provider by id
 		
 		String sql = "DELETE FROM Provider WHERE( id = "+p.getId()+");";
 		try {
@@ -81,14 +78,13 @@ public class ProviderServices {
 			statement.execute();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
 		
 	}
 	
-	public static int getNextId() {
+	public static int getNextId() { //Return the next id to use for next team
 		
 		int id = 0;
 		String sql = "SELECT MAX(id) FROM Provider;";
@@ -100,7 +96,6 @@ public class ProviderServices {
 			id = resultSet.getInt(1);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return id+1;

@@ -14,13 +14,13 @@ public class UserServices {
 
 	static ResultSet resultSet = null;
 	
-	public static boolean insertUser(User u) {
+	public static boolean insertUser(User u) { //Insert into table by a given user
 		
 		String sql = "INSERT INTO Username VALUES("+u.getId()+", \'"+u.getName()+"\', \'"+u.getPassword()+"\');";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.execute();
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString()); //Connection to database
+			PreparedStatement statement = conn.prepareStatement(sql); //Prepare sql query
+			statement.execute(); //Execution of the prepared query
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class UserServices {
 		
 	}
 	
-	public static ArrayList<String> selectUsername(){
+	public static ArrayList<String> selectUsername(){ //Return the username from every user of the database
 		
 		ArrayList<String> usernames = new ArrayList<String>();
 		String sql = "SELECT name FROM Username;";
@@ -46,7 +46,7 @@ public class UserServices {
 		return usernames;
 	}
 	
-	public static ArrayList<User> selectUser(){
+	public static ArrayList<User> selectUser(){ //Return every user from the database, we establish id 0 because we wont use this attribute for now
 		
 		ArrayList<User> usernames = new ArrayList<User>();
 		String sql = "SELECT name, password FROM Username;";
@@ -63,7 +63,7 @@ public class UserServices {
 		return usernames;
 	}
 	
-	public static int getNextId() {
+	public static int getNextId() { //Return the next id to use for next team
 		
 		int id = 0;
 		String sql = "SELECT MAX(id) FROM Username;";
