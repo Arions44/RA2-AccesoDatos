@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AzureSql {
-	
 	private static String cnnString =
 			"jdbc:sqlserver://sql-server-ra2.database.windows.net;"
 			+"database=RA2_Grupo6;"
@@ -19,5 +18,15 @@ public class AzureSql {
 	
 	public static String getCnnString() {
 		return cnnString;
+	}
+	
+	public static Connection createConnection() {
+		try {
+			return DriverManager.getConnection(AzureSql.getCnnString());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

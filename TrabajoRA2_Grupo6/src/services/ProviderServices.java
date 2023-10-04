@@ -13,12 +13,13 @@ import models.Provider;
 public class ProviderServices {
 
 	static ResultSet resultSet = null;
+	static Connection conn = AzureSql.createConnection();
+	
 	
 	public static boolean insertProvider(Provider p) { //Insert into table by a given provider
 		
 		String sql = "INSERT INTO Provider VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', \'"+p.getAddress()+"\', \'"+p.getPhone()+"\');";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString()); //Connection to database
 			PreparedStatement statement = conn.prepareStatement(sql); //Prepare sql query
 			statement.execute(); //Execution of the prepared query
 			return true;
@@ -41,7 +42,6 @@ public class ProviderServices {
 			sql += " WHERE(" + field + " = \'" + value +"\');";
 		}
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			while(resultSet.next()) {
@@ -58,7 +58,6 @@ public class ProviderServices {
 		
 		String sql = "UPDATE Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
 			return true;
@@ -73,7 +72,6 @@ public class ProviderServices {
 		
 		String sql = "DELETE FROM Provider WHERE( id = "+p.getId()+");";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
 			return true;
@@ -89,7 +87,6 @@ public class ProviderServices {
 		int id = 0;
 		String sql = "SELECT MAX(id) FROM Provider;";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			resultSet.next();
