@@ -14,7 +14,7 @@ public class UserServices {
 
 	static ResultSet resultSet = null;
 	
-	public static boolean insertProvider(User u) {
+	public static boolean insertUser(User u) {
 		
 		String sql = "INSERT INTO Username VALUES("+u.getId()+", \'"+u.getName()+"\', \'"+u.getPassword()+"\');";
 		try {

@@ -4,7 +4,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import models.User;
+import services.UserServices;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +22,7 @@ import javax.swing.JButton;
 public class RegisterView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField Username;
+	private JTextField username;
 	private JPasswordField password,passwordConfirm;
 	private JButton buttonRegister,buttonBack;
 	
@@ -45,10 +51,10 @@ public class RegisterView extends JFrame {
 		labelConfimPassword.setFont(new Font("Arial", Font.PLAIN, 14));
 		getContentPane().add(labelConfimPassword);
 		
-		Username = new JTextField();
-		Username.setBounds(179, 32, 136, 19);
-		getContentPane().add(Username);
-		Username.setColumns(10);
+		username = new JTextField();
+		username.setBounds(179, 32, 136, 19);
+		getContentPane().add(username);
+		username.setColumns(10);
 		
 		password = new JPasswordField();
 		password.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -79,7 +85,37 @@ public class RegisterView extends JFrame {
 			Object o=e.getSource();
 
 			if(o.equals(buttonRegister)) {
-				//llamar a userservices
+				boolean repeated = false;
+				for(String u : UserServices.selectUser()) {
+					if(u.equalsIgnoreCase(username.getText()))
+						repeated = true;
+				}
+				if(!repeated) 
+				{
+					if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword())))
+					{
+						if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword()))))
+						{
+							JOptionPane.showMessageDialog(RegisterView.this, "User created");
+							dispose();
+							LoginView lv=new LoginView();
+							lv.setVisible(true);
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
+						}
+							
+					}
+					else 
+					{
+						JOptionPane.showMessageDialog(RegisterView.this, "The passwords doesn't match");
+					}
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(RegisterView.this, "This username already exists, use another username");
+				}	
 			}else if(o.equals(buttonBack)) {
 				dispose();
 				LoginView lv=new LoginView();
