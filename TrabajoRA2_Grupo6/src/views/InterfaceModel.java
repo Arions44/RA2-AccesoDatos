@@ -14,6 +14,7 @@ public class InterfaceModel {
 		jf.setTitle(tittle);
 		Image icon1 = Toolkit.getDefaultToolkit().getImage("resources/icon/logo.JPG");
 		jf.setIconImage(icon1);
+		
 	}
 	
 	public static void ButtonModel(JButton jb) {
