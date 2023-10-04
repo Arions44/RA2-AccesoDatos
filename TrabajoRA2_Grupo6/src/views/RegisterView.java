@@ -32,7 +32,7 @@ public class RegisterView extends JFrame {
 		InterfaceModel.FrameModel(this, "Register");
 		getContentPane().setLayout(null);
 		
-		Manejador m=new Manejador();
+		Listener l=new Listener();
 		
 		JLabel labelUsername = new JLabel("Username:");
 		labelUsername.setBounds(46, 34, 123, 13);
@@ -69,48 +69,50 @@ public class RegisterView extends JFrame {
 		buttonRegister = new JButton("Register");
 		buttonRegister.setFont(new Font("Arial", Font.PLAIN, 14));
 		buttonRegister.setBounds(199, 144, 103, 33);
-		buttonRegister.addActionListener(m);
+		buttonRegister.addActionListener(l);
 		getContentPane().add(buttonRegister);
 		
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
 		buttonBack.setBounds(22, 174, 66, 21);
-		buttonBack.addActionListener(m);
+		buttonBack.addActionListener(l);
 		getContentPane().add(buttonBack);
 	}
 	
-	private class Manejador implements ActionListener{
+	private class Listener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
-
+			
 			if(o.equals(buttonRegister)) {
 				boolean repeated = false;
-				for(String u : UserServices.selectUser()) {
+				for(String u : UserServices.selectUsername()) {
 					if(u.equalsIgnoreCase(username.getText()))
 						repeated = true;
 				}
 				if(!repeated) 
 				{
-					if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword())))
+					if(MatchesPassword(String.valueOf(password.getPassword()))) 
 					{
-						if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword()))))
-						{
-							JOptionPane.showMessageDialog(RegisterView.this, "User created");
-							dispose();
-							LoginView lv=new LoginView();
-							lv.setVisible(true);
+						if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword()))) {
+							if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword()))))
+							{
+								JOptionPane.showMessageDialog(RegisterView.this, "User created");
+								dispose();
+								LoginView lv=new LoginView();
+								lv.setVisible(true);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
+							}
 						}
 						else
 						{
-							JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
+							JOptionPane.showMessageDialog(RegisterView.this, "Password doesn't matches");
 						}
-							
 					}
-					else 
-					{
-						JOptionPane.showMessageDialog(RegisterView.this, "The passwords doesn't match");
-					}
+					
 				}
 				else 
 				{
@@ -121,6 +123,18 @@ public class RegisterView extends JFrame {
 				LoginView lv=new LoginView();
 				lv.setVisible(true);
 			}
+		}
+
+		private boolean MatchesPassword(String pass) {
+			
+			if(pass.length()<6 || pass.length()>20) {
+				JOptionPane.showMessageDialog(RegisterView.this, "The password must be between 6 and 20 characters");
+				return false;
+			}else if(!pass.matches(".*[A-Z].*\\d.*|.*\\d.*[A-Z].*")) {
+				JOptionPane.showMessageDialog(RegisterView.this, "The password must include at least one capital letter and one number");
+				return false;
+			}
+			return true;
 		}
 	}
 

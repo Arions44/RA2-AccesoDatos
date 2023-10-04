@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import models.User;
+import services.UserServices;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Font;
@@ -47,7 +51,7 @@ public class LoginView extends JFrame {
 		InterfaceModel.FrameModel(this, "Login");
 		getContentPane().setLayout(null);
 		
-		Manejador m=new Manejador();
+		Listener l=new Listener();
 		
 		JLabel labelUsername = new JLabel("Username:");
 		labelUsername.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -78,24 +82,47 @@ public class LoginView extends JFrame {
 		buttonSignIn = new JButton("Sign in");
 		buttonSignIn.setFont(new Font("Arial", Font.PLAIN, 14));
 		buttonSignIn.setBounds(130, 125, 120, 30);
-		buttonSignIn.addActionListener(m);
+		buttonSignIn.addActionListener(l);
 		getContentPane().add(buttonSignIn);
 		
 		buttonSignUp = new JButton("Sign up");
 		buttonSignUp.setFont(new Font("Arial", Font.PLAIN, 14));
 		buttonSignUp.setBounds(130, 210, 120, 30);
-		buttonSignUp.addActionListener(m);
+		buttonSignUp.addActionListener(l);
 		getContentPane().add(buttonSignUp);
 		
 
 	}
 	
-	private class Manejador implements ActionListener{
+	private class Listener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
 
 			if(o.equals(buttonSignIn)) {
+				
+				boolean userValid=false;
+				boolean passwordValid=false;
+				
+				for(User u : UserServices.selectUser()) {
+					if(u.getName().equals(username.getText())) {
+						userValid = true;
+						if (u.getPassword().equals(String.valueOf(password.getPassword()))){
+							passwordValid=true;
+						}
+					}
+				}
+				
+				if(!userValid) {
+					JOptionPane.showMessageDialog(LoginView.this, "Username doesn't exist");
+				}else if(!passwordValid) {
+					JOptionPane.showMessageDialog(LoginView.this, "Invalid password");
+				}
+				else {
+					dispose();
+					HomeView hv=new HomeView();
+					hv.setVisible(true);
+				}
 				
 			}else if(o.equals(buttonSignUp)) {
 				dispose();

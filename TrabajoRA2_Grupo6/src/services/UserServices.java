@@ -30,7 +30,7 @@ public class UserServices {
 		
 	}
 	
-	public static ArrayList<String> selectUser(){
+	public static ArrayList<String> selectUsername(){
 		
 		ArrayList<String> usernames = new ArrayList<String>();
 		String sql = "SELECT name FROM Username;";
@@ -40,6 +40,24 @@ public class UserServices {
 			resultSet = statement.executeQuery(sql);
 			while(resultSet.next()) {
 				usernames.add(resultSet.getString(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return usernames;
+	}
+	
+	public static ArrayList<User> selectUser(){
+		
+		ArrayList<User> usernames = new ArrayList<User>();
+		String sql = "SELECT name, password FROM Username;";
+		try {
+			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()) {
+				usernames.add(new User(0,resultSet.getString(1),resultSet.getString(2)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
