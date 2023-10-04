@@ -23,7 +23,6 @@ public class UserServices {
 			statement.execute();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -42,7 +41,6 @@ public class UserServices {
 				usernames.add(resultSet.getString(1));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return usernames;
@@ -60,7 +58,6 @@ public class UserServices {
 				usernames.add(new User(0,resultSet.getString(1),resultSet.getString(2)));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return usernames;
@@ -78,7 +75,6 @@ public class UserServices {
 			id = resultSet.getInt(1);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return id+1;

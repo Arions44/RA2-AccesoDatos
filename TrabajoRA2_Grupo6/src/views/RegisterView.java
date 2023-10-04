@@ -1,10 +1,6 @@
 package views;
 
-import java.awt.EventQueue;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import models.User;
 import services.UserServices;
 
@@ -90,32 +86,26 @@ public class RegisterView extends JFrame {
 					if(u.equalsIgnoreCase(username.getText()))
 						repeated = true;
 				}
-				if(!repeated) 
-				{
-					if(MatchesPassword(String.valueOf(password.getPassword()))) 
-					{
+				if(!repeated) {
+					if(MatchesPassword(String.valueOf(password.getPassword()))) {
 						if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword()))) {
-							if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword()))))
-							{
+							if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword())))){
 								JOptionPane.showMessageDialog(RegisterView.this, "User created");
 								dispose();
 								LoginView lv=new LoginView();
 								lv.setVisible(true);
 							}
-							else
-							{
+							else {
 								JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
 							}
 						}
-						else
-						{
+						else {
 							JOptionPane.showMessageDialog(RegisterView.this, "Password doesn't matches");
 						}
 					}
 					
 				}
-				else 
-				{
+				else {
 					JOptionPane.showMessageDialog(RegisterView.this, "This username already exists, use another username");
 				}	
 			}else if(o.equals(buttonBack)) {
