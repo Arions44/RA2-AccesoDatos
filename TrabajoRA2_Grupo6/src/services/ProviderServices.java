@@ -58,7 +58,7 @@ public class ProviderServices {
 	
 	public static boolean updateProvider(Provider p) {
 		
-		String sql = "UPDATE FROM Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
+		String sql = "UPDATE Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
 		try {
 			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = conn.prepareStatement(sql);
