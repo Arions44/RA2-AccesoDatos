@@ -25,6 +25,7 @@ public class ProviderServices {
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("a");
 			return false;
 		}
 		
@@ -54,9 +55,9 @@ public class ProviderServices {
 		return providers;
 	}
 	
-	public static boolean updateProvider(Provider p) { //Update provider
+	public static boolean updateProvider(int id, String name,String description,String address,String phone) { //Update provider
 		
-		String sql = "UPDATE Provider SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()+"\', address = \'"+p.getAddress()+"\', phone = \'"+p.getPhone()+"\' WHERE id = "+p.getId();
+		String sql = "UPDATE Provider SET name = \'"+name+"\', description = \'"+description+"\', address = \'"+address+"\', phone = \'"+phone+"\' WHERE id = "+id;
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

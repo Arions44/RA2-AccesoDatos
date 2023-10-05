@@ -63,7 +63,9 @@ public class HomeView extends JFrame {
 				
 			}
 			else if(o.equals(buttonProviders)) {
-				
+				dispose();
+				ListProvidersView lpv=new ListProvidersView();
+				lpv.setVisible(true);
 			}
 			else if(o.equals(buttonTransactions)) {
 				

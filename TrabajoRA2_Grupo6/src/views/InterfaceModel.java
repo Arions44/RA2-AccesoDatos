@@ -8,10 +8,10 @@ import javax.swing.JFrame;
 
 public class InterfaceModel {
 	
-	public static void FrameModel(JFrame jf, String tittle) {
+	public static void FrameModel(JFrame jf, String title) {
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setLocationRelativeTo(null);
-		jf.setTitle(tittle);
+		jf.setTitle(title);
 		Image icon1 = Toolkit.getDefaultToolkit().getImage("resources/icon/logo.JPG");
 		jf.setIconImage(icon1);
 		
