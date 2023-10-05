@@ -16,13 +16,14 @@ import models.Trading;
 
 public class TradingService {
 	
+	static ResultSet resultSet = null;
+	static Connection cnn = AzureSql.createConnection();
+	
 	//Method to autoIncrement the id when a new Transaction is created
 	public static int getNextId() {
-		ResultSet resultSet = null;
 		int id = -1;
 		String sql = "SELECT MAX(id) FROM Trading;";
 		try {
-			Connection cnn = DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement = cnn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			resultSet.next();
@@ -37,7 +38,6 @@ public class TradingService {
 		String sql = "INSERT INTO Trading VALUES("+t.getId()+", "+t.getId_product()+", "+t.getId_provider()
 		+", "+t.getAmount()+", \'"+new SimpleDateFormat("yyyy-MM-dd").format(t.getDate())+"\', \'"+t.getType()+"\');";
 		try {
-			Connection cnn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = cnn.prepareStatement(sql);
 			statement.execute();
 			statement.setInt(1, t.getId());
@@ -64,7 +64,6 @@ public class TradingService {
 	public static ArrayList<Trading> selectTrading(String field, Object value){
 			
 			ArrayList<Trading> trades = new ArrayList<Trading>();
-			ResultSet resultSet = null;
 			String sql = "SELECT * FROM Trading";
 			if(field == null) {
 				sql += ";";
@@ -75,8 +74,7 @@ public class TradingService {
 			}
 			
 			try {
-				Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
-				Statement statement = conn.createStatement();
+				Statement statement = cnn.createStatement();
 				resultSet = statement.executeQuery(sql);
 				while(resultSet.next()) {
 					trades.add(new Trading(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getString(5), resultSet.getString(6)));
@@ -93,7 +91,6 @@ public class TradingService {
 	private static void updateProductStock(int productId, int amountChange) {
         String sql = "UPDATE Products SET stock = stock + ? WHERE id = ?";
         try {
-            Connection cnn = DriverManager.getConnection(AzureSql.getCnnString());
             PreparedStatement statement = cnn.prepareStatement(sql);
             statement.setInt(1, amountChange);
             statement.setInt(2, productId);
