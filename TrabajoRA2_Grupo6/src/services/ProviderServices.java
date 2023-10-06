@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import models.Provider;
 
@@ -53,6 +55,28 @@ public class ProviderServices {
 			e.printStackTrace();
 		}
 		return providers;
+	}
+	
+	public static Map<Integer, String> selectProviderName(String field, int id){ //Return provider by a given field and value when filtered or return every provider when parameters are null
+		
+		Map<Integer, String> ProviderIdName = new HashMap<Integer,String>();
+		String sql = "SELECT id, name FROM Provider";
+		if(field == null) {
+			sql += ";";
+		}else if(field.equalsIgnoreCase("id")){
+			sql += " WHERE(" + field + " = " + id +");";
+		}
+		try {
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()) {
+				ProviderIdName.put(resultSet.getInt(1), resultSet.getString(2));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ProviderIdName;
 	}
 	
 	public static boolean updateProvider(int id, String name,String description,String address,String phone) { //Update provider
