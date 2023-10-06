@@ -11,8 +11,7 @@ public class Product {
 		super();
 	}
 
-	public Product(String name, String description, float price, String category, String image, int stock,
-			int id_provider) {
+	public Product(String name, String description, float price, String category, String image, int id_provider) {
 		super();
 		this.id = ProductServices.getNextId();
 		this.name = name;
@@ -20,7 +19,7 @@ public class Product {
 		this.price = price;
 		this.category = category;
 		this.image = image;
-		this.stock = stock;
+		this.stock = 0;
 		this.id_provider = id_provider;
 	}
 	

@@ -12,14 +12,14 @@ import models.Product;
 import models.Provider;
 
 public class ProductServices {
-	
+	static Connection conn=AzureSql.createConnection();
 	public static boolean insertProduct(Product p) {
 		ResultSet resultSet=null;
+		
 		
 		String sql="INSERT INTO Product VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', "+p.getPrice()
 				+", \'"+p.getCategory()+"\', \'"+p.getImage()+"\', "+p.getStock()+", "+p.getId_provider()+");";
 		try {
-			Connection conn=DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement=conn.prepareStatement(sql);
 			statement.execute();
 			return true;
@@ -35,7 +35,6 @@ public class ProductServices {
 		int id=0;
 		String sql="SELECT MAX(id)FROM Product;";
 		try {
-			Connection conn=DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement=conn.createStatement();
 			resultSet=statement.executeQuery(sql);
 			resultSet.next();
@@ -60,7 +59,6 @@ public class ProductServices {
 			sql += " WHERE(" + field + " = \'" + value +"\');";
 		}
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			while(resultSet.next()) {
@@ -74,11 +72,10 @@ public class ProductServices {
 		return products;
 	}
 	
-	public static boolean deleteProduct(Product p) {
+	public static boolean deleteProduct(int id) {
 		
-		String sql = "DELETE FROM Product WHERE( id = "+p.getId()+");";
+		String sql = "DELETE FROM Product WHERE( id = "+id+") CASCADE CONSTRAINTS;";
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
 			return true;
@@ -95,7 +92,6 @@ public class ProductServices {
 			+"\', price = "+p.getPrice()+", category = \'"+p.getCategory()+"\', image = \'"+p.getImage()+"\', stock = "+p.getStock() 
 			+", id_provider = "+p.getId_provider()+" WHERE id = "+p.getId();
 		try {
-			Connection conn = DriverManager.getConnection(AzureSql.getCnnString());
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
 			return true;
