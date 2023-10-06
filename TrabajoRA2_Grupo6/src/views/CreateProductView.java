@@ -1,22 +1,36 @@
 package views;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+import services.ProductServices;
 import services.ProviderServices;
 
 public class CreateProductView extends JFrame {
@@ -27,10 +41,11 @@ public class CreateProductView extends JFrame {
 	private JButton buttonBack,buttonCreate;
 	private JTextField name,Description,Precio;
 	private JComboBox category,providerNames;
+	private String foto;
 	
 	
 	public CreateProductView() {
-		setBounds(100, 100, 490, 480);
+		setBounds(100, 100, 600, 440);
 		InterfaceModel.FrameModel(this, "Products");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -42,13 +57,13 @@ public class CreateProductView extends JFrame {
 		
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		buttonBack.setBounds(10, 374, 96, 21);
+		buttonBack.setBounds(10, 346, 96, 21);
 		buttonBack.addActionListener(l);
 		contentPane.add(buttonBack);
 		
 		buttonCreate = new JButton("Create");
 		buttonCreate.setFont(new Font("Arial", Font.PLAIN, 14));
-		buttonCreate.setBounds(160, 306, 100, 40);
+		buttonCreate.setBounds(194, 290, 100, 40);
 		buttonCreate.addActionListener(l);
 		contentPane.add(buttonCreate);
 		
@@ -112,7 +127,25 @@ public class CreateProductView extends JFrame {
 		providerNames.setBounds(160, 229, 125, 21);
 		contentPane.add(providerNames);
 		
-		
+		ImageIcon defaultIcon = new ImageIcon("resources/images/default.jpg");
+		Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
+		ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
+		JLabel image = new JLabel(defaultIcon2);
+		image.setBounds(356, 112, 198, 121);
+		contentPane.add(image);
+		image.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				foto=bringFileChooserImage();
+				ImageIcon icon = new ImageIcon(foto);
+                Image i = icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
+                ImageIcon img2 = new ImageIcon(i);
+                image.setIcon(img2);
+			}
+			
+		});
+
 	}
 	
 	private void setProviderNames() {
@@ -136,8 +169,47 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				
+				if(ProductServices.insertProduct(null)) {
+					
+				}
 			}
 		}
+	}
+	
+	public String bringFileChooserImage() {
+		JFileChooser fc=new JFileChooser();
+		String path="";
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		FileNameExtensionFilter imgFilter = new FileNameExtensionFilter("JPG and GIF images", "JPG", "GIF","PNG"); 
+	    fc.setFileFilter(imgFilter);
+	    int result = fc.showOpenDialog(null);
+	    
+	    File file=fc.getSelectedFile();
+	    
+	    if(result!=JFileChooser.CANCEL_OPTION) {
+	    	
+	    	if(file==null || file.getName().equalsIgnoreCase("")) {
+	    		JOptionPane.showMessageDialog(null, "Choose an image");
+	    }else {
+	    	
+	    	String pathImage = "resources/images/"+file.getName();
+	    	Path destino=Path.of(pathImage).toAbsolutePath();
+	    	path=pathImage;
+	    	
+	    	try {
+	    		if(!file.getAbsolutePath().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+	    			try {
+	    			Files.copy(file.toPath(), destino);
+	    			}catch(FileAlreadyExistsException e) {
+	    				JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
+	    			}
+	    		}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	    	}
+	    return path;
 	}
 }

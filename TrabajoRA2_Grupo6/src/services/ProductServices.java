@@ -74,7 +74,7 @@ public class ProductServices {
 	
 	public static boolean deleteProduct(int id) {
 		
-		String sql = "DELETE FROM Product WHERE( id = "+id+") CASCADE CONSTRAINTS;";
+		String sql = "DELETE FROM Product WHERE( id = "+id+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

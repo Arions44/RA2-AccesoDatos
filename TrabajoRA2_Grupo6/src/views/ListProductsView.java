@@ -54,7 +54,7 @@ public class ListProductsView extends JFrame {
 		
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		buttonBack.setBounds(21, 417, 57, 21);
+		buttonBack.setBounds(10, 417, 68, 21);
 		buttonBack.addActionListener(l);
 		getContentPane().add(buttonBack);
 		
@@ -145,7 +145,9 @@ public class ListProductsView extends JFrame {
 				
 				if(option==JOptionPane.YES_OPTION) {
 					if(ProductServices.deleteProduct(mapId.get(row))) {
+						table.setModel(Model());
 						JOptionPane.showMessageDialog(ListProductsView.this, "Product deleted!");
+						
 					}
 				}
 				
