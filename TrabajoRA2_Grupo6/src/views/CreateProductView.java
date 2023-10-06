@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,7 +27,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import services.ProductServices;
 import services.ProviderServices;
 
@@ -160,10 +157,13 @@ public class CreateProductView extends JFrame {
 	}
 
 	private class Listener implements ActionListener{
+		static Path destino;
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
-
+			
+			
 			if(o.equals(buttonBack)) {
 				dispose();
 				ListProductsView lpv=new ListProductsView();
@@ -174,9 +174,11 @@ public class CreateProductView extends JFrame {
 				}
 			}
 		}
+		
+		
 	}
-	
 	public String bringFileChooserImage() {
+		
 		JFileChooser fc=new JFileChooser();
 		String path="";
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -191,25 +193,36 @@ public class CreateProductView extends JFrame {
 	    	if(file==null || file.getName().equalsIgnoreCase("")) {
 	    		JOptionPane.showMessageDialog(null, "Choose an image");
 	    }else {
-	    	
 	    	String pathImage = "resources/images/"+file.getName();
-	    	Path destino=Path.of(pathImage).toAbsolutePath();
-	    	path=pathImage;
-	    	
+	    	File f=new File(pathImage);
+	    	if(f.exists()) {
+	    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
+				path="resources/images/default.jpg";
+				return path;
+	    	}
+	    	else {
+		    	destino=Path.of(pathImage).toAbsolutePath();
+		    	path=pathImage;
+	    	}
 	    	try {
 	    		if(!file.getAbsolutePath().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
 	    			try {
-	    			Files.copy(file.toPath(), destino);
+	    				Files.copy(file.toPath(), destino);
 	    			}catch(FileAlreadyExistsException e) {
 	    				JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
+	    				path="resources/images/default.jpg";
 	    			}
 	    		}
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+	    	
 	    }
 	    	}
+	    if(path.length()==0)
+	    	path="resources/images/default.jpg";
+	    	
 	    return path;
 	}
+	
 }
