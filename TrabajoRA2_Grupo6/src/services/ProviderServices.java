@@ -93,9 +93,9 @@ public class ProviderServices {
 		
 	}
 	
-	public static boolean deleteProvider(Provider p) { //Delete provider by id
+	public static boolean deleteProvider(int id) { //Delete provider by id
 		
-		String sql = "DELETE FROM Provider WHERE( id = "+p.getId()+");";
+		String sql = "DELETE FROM Provider WHERE( id = "+id+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

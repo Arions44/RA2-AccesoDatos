@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,9 @@ public class CreateProductView extends JFrame {
 	private JButton buttonBack,buttonCreate;
 	private JTextField name,Description,Precio;
 	private JComboBox category,providerNames;
-	private String foto;
+	private String pathImage;
+	private JLabel image;
+	private Path finalPath;
 	
 	
 	public CreateProductView() {
@@ -127,20 +130,20 @@ public class CreateProductView extends JFrame {
 		ImageIcon defaultIcon = new ImageIcon("resources/images/default.jpg");
 		Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
 		ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
-		JLabel image = new JLabel(defaultIcon2);
+		image = new JLabel(defaultIcon2);
 		image.setBounds(356, 112, 198, 121);
 		contentPane.add(image);
 		image.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				foto=bringFileChooserImage();
-				ImageIcon icon = new ImageIcon(foto);
+				pathImage=bringFileChooserImage();
+				ImageIcon icon = new ImageIcon(pathImage);
                 Image i = icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
                 ImageIcon img2 = new ImageIcon(i);
                 image.setIcon(img2);
+                image.setToolTipText(pathImage);
 			}
-			
 		});
 
 	}
@@ -157,7 +160,6 @@ public class CreateProductView extends JFrame {
 	}
 
 	private class Listener implements ActionListener{
-		static Path destino;
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -172,6 +174,14 @@ public class CreateProductView extends JFrame {
 				if(ProductServices.insertProduct(null)) {
 					
 				}
+		    	if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+		    		try {
+						Files.copy(Paths.get(image.getText()), finalPath);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+		    	}
+				
 			}
 		}
 		
@@ -187,7 +197,7 @@ public class CreateProductView extends JFrame {
 	    int result = fc.showOpenDialog(null);
 	    
 	    File file=fc.getSelectedFile();
-	    
+	    path=file.getAbsolutePath();
 	    if(result!=JFileChooser.CANCEL_OPTION) {
 	    	
 	    	if(file==null || file.getName().equalsIgnoreCase("")) {
@@ -201,22 +211,8 @@ public class CreateProductView extends JFrame {
 				return path;
 	    	}
 	    	else {
-		    	destino=Path.of(pathImage).toAbsolutePath();
-		    	path=pathImage;
+		    	finalPath=Path.of(pathImage).toAbsolutePath();
 	    	}
-	    	try {
-	    		if(!file.getAbsolutePath().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-	    			try {
-	    				Files.copy(file.toPath(), destino);
-	    			}catch(FileAlreadyExistsException e) {
-	    				JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
-	    				path="resources/images/default.jpg";
-	    			}
-	    		}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    	
 	    }
 	    	}
 	    if(path.length()==0)
