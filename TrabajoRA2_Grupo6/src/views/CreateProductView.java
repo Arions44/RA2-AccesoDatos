@@ -28,6 +28,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import models.Product;
 import services.ProductServices;
 import services.ProviderServices;
 
@@ -37,11 +39,12 @@ public class CreateProductView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JButton buttonBack,buttonCreate;
-	private JTextField name,Description,Precio;
+	private JTextField name,description,price;
 	private JComboBox category,providerNames;
 	private String pathImage;
 	private JLabel image;
 	private Path finalPath;
+	private static Map<Integer, String> providerIdName;
 	
 	
 	public CreateProductView() {
@@ -103,17 +106,17 @@ public class CreateProductView extends JFrame {
 		contentPane.add(name);
 		name.setColumns(10);
 		
-		Description = new JTextField();
-		Description.setFont(new Font("Arial", Font.PLAIN, 14));
-		Description.setColumns(10);
-		Description.setBounds(160, 93, 130, 21);
-		contentPane.add(Description);
+		description = new JTextField();
+		description.setFont(new Font("Arial", Font.PLAIN, 14));
+		description.setColumns(10);
+		description.setBounds(160, 93, 130, 21);
+		contentPane.add(description);
 		
-		Precio = new JTextField();
-		Precio.setFont(new Font("Arial", Font.PLAIN, 14));
-		Precio.setColumns(10);
-		Precio.setBounds(160, 137, 130, 21);
-		contentPane.add(Precio);
+		price = new JTextField();
+		price.setFont(new Font("Arial", Font.PLAIN, 14));
+		price.setColumns(10);
+		price.setBounds(160, 137, 130, 21);
+		contentPane.add(price);
 		
 		category = new JComboBox(cat);
 		category.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -137,19 +140,19 @@ public class CreateProductView extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				pathImage=bringFileChooserImage();
-				ImageIcon icon = new ImageIcon(pathImage);
+				String filePath=bringFileChooserImage();
+				ImageIcon icon = new ImageIcon(filePath);
                 Image i = icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
                 ImageIcon img2 = new ImageIcon(i);
                 image.setIcon(img2);
-                image.setToolTipText(pathImage);
+                image.setToolTipText(filePath);
 			}
 		});
 
 	}
 	
 	private void setProviderNames() {
-		Map<Integer, String> providerIdName = ProviderServices.selectProviderName(null, 0);
+		providerIdName = ProviderServices.selectProviderName(null, 0);
 		
 		List<String> list=new ArrayList<>();
 		for (Entry<Integer, String> entry : providerIdName.entrySet()) {
@@ -171,16 +174,19 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				if(ProductServices.insertProduct(null)) {
-					
+				
+				if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
+						(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
+					if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+			    		try {
+							Files.copy(Paths.get(image.getToolTipText()), finalPath);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+			    	}
+					JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
 				}
-		    	if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-		    		try {
-						Files.copy(Paths.get(image.getText()), finalPath);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-		    	}
+		    	
 				
 			}
 		}
@@ -195,30 +201,42 @@ public class CreateProductView extends JFrame {
 		FileNameExtensionFilter imgFilter = new FileNameExtensionFilter("JPG and GIF images", "JPG", "GIF","PNG"); 
 	    fc.setFileFilter(imgFilter);
 	    int result = fc.showOpenDialog(null);
-	    
-	    File file=fc.getSelectedFile();
-	    path=file.getAbsolutePath();
-	    if(result!=JFileChooser.CANCEL_OPTION) {
-	    	
-	    	if(file==null || file.getName().equalsIgnoreCase("")) {
-	    		JOptionPane.showMessageDialog(null, "Choose an image");
-	    }else {
-	    	String pathImage = "resources/images/"+file.getName();
-	    	File f=new File(pathImage);
-	    	if(f.exists()) {
-	    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
-				path="resources/images/default.jpg";
-				return path;
-	    	}
-	    	else {
-		    	finalPath=Path.of(pathImage).toAbsolutePath();
-	    	}
+	    try {
+		    File file=fc.getSelectedFile();
+		    path=file.getAbsolutePath();
+		    
+		    if(file==null || file.getName().equalsIgnoreCase("")) {
+		    	JOptionPane.showMessageDialog(null, "Choose an image");
+		    }else {
+		    	pathImage = "resources/images/"+file.getName();
+		    	File f=new File(pathImage);
+		    	if(f.exists()) {
+		    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
+					path="resources/images/default.jpg";
+					return path;
+		    	}
+		    	else {
+			    	finalPath=Path.of(pathImage).toAbsolutePath();
+		    	}
+		    }
+	    }catch(Exception e) {
+	    	JOptionPane.showMessageDialog(CreateProductView.this, "Error selecting the image!");
 	    }
-	    	}
+	    
+	    	
+	    
 	    if(path.length()==0)
 	    	path="resources/images/default.jpg";
 	    	
 	    return path;
 	}
 	
+	 private static int getKeyFromValue(String value) {
+	        for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
+	            if (entry.getValue().equals(value)) {
+	                return entry.getKey();
+	            }
+	        }
+	        return 0;
+	    }
 }

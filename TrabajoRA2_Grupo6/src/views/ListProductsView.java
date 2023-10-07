@@ -6,10 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,12 +22,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 import models.Product;
 import services.ProductServices;
 import services.ProviderServices;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 public class ListProductsView extends JFrame {
 
@@ -32,7 +34,9 @@ public class ListProductsView extends JFrame {
 	private JButton buttonBack,buttonUpdate,buttonDelete,buttonCreate;
 	private static JTable table;
 	private int row;
-	private static Map<Integer,Integer> mapId=new HashMap<Integer,Integer>();
+	private String imageRoute;
+	private JLabel image;
+	private static Map<Integer,Integer> mapId;
 
 	public ListProductsView() {
 		setBounds(100, 100, 790, 480);
@@ -82,6 +86,10 @@ public class ListProductsView extends JFrame {
 	        
 	     table.setDefaultEditor(Object.class, null);
 	     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	     
+	     image = new JLabel("");
+	     image.setBounds(582, 90, 160, 141);
+	     contentPane.add(image);
 	     table.getTableHeader().setResizingAllowed(false);
 	     table.getTableHeader().setReorderingAllowed(false);
 	     
@@ -99,11 +107,13 @@ public class ListProductsView extends JFrame {
 						buttonUpdate.setEnabled(false);
 					}
 					System.out.println(mapId.get(row));
-//					String nombre = (String) table.getValueAt(fila, 0);
-//	                String proveedor = (String) table.getValueAt(fila, 1);
-//	                String tipo=(String) table.getValueAt(fila, 2);
-//	                int cant = Integer.parseInt((table.getValueAt(fila, 3)).toString());
-
+					
+					imageRoute=ProductServices.selectImageProduct(mapId.get(row));
+					ImageIcon icon = new ImageIcon(imageRoute);
+                    Image i = icon.getImage().getScaledInstance(112, 137, Image.SCALE_SMOOTH);
+                    ImageIcon img2 = new ImageIcon(i);
+                    image.setIcon(img2);
+                    image.setText(null);
 				}
 			});
 	     
@@ -113,7 +123,7 @@ public class ListProductsView extends JFrame {
 		
         String[] colum = {"Name", "Description","Price","Category","Stock","Provider name"};
         DefaultTableModel modelo = new DefaultTableModel(colum, 0);
-        
+        mapId=new HashMap<Integer,Integer>(); 
         Map<Integer, String> providerIdName = ProviderServices.selectProviderName(null, 0);
         int count=0;
         for (Product p : ProductServices.selectProduct(null, null)) {
@@ -145,9 +155,11 @@ public class ListProductsView extends JFrame {
 				
 				if(option==JOptionPane.YES_OPTION) {
 					if(ProductServices.deleteProduct(mapId.get(row))) {
+						File f=new File(imageRoute);
+						f.delete();
+						image.setIcon(null);
 						table.setModel(Model());
 						JOptionPane.showMessageDialog(ListProductsView.this, "Product deleted!");
-						
 					}
 				}
 				

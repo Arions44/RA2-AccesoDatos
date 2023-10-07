@@ -72,6 +72,25 @@ public class ProductServices {
 		return products;
 	}
 	
+	public static String selectImageProduct(int value){
+		
+		ResultSet resultSet = null;
+		String sql = "SELECT image FROM Product WHERE id = "+ value+";";
+		String img = null;
+		try {
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			resultSet.next();
+			
+			img=resultSet.getString(1);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return img;
+	}
+	
 	public static boolean deleteProduct(int id) {
 		
 		String sql = "DELETE FROM Product WHERE( id = "+id+");";
