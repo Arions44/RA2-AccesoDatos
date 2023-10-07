@@ -170,10 +170,13 @@ public class ListProductsView extends JFrame {
 	}
 
 	private class Listener implements ActionListener{
+		boolean active=false;
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
-
+			
+			
 			if(o.equals(buttonBack)) {
 				dispose();
 				HomeView hv=new HomeView();
@@ -191,7 +194,14 @@ public class ListProductsView extends JFrame {
 						File f=new File(imageRoute);
 						f.delete();
 						image.setIcon(null);
-						table.setModel(Model(null,null));
+						if(active) {
+							table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+						}
+						else if(!active) {
+							table.setModel(Model(null,null));
+						}
+						buttonDelete.setEnabled(false);
+						buttonUpdate.setEnabled(false);
 						JOptionPane.showMessageDialog(ListProductsView.this, "Product deleted!");
 					}
 				}
@@ -203,13 +213,19 @@ public class ListProductsView extends JFrame {
 				
 			}else if(o.equals(buttonApply)) {
 				if(filter.getText().length()>0) {
+					active=true;
 					table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
 					buttonApply.setVisible(false);
 					buttonReset.setVisible(true);
+					
+					buttonDelete.setEnabled(false);
+					buttonUpdate.setEnabled(false);
+					image.setIcon(null);
 				}else
 					JOptionPane.showMessageDialog(ListProductsView.this, "You have not applied any filter!");
 				
 			}else if(o.equals(buttonReset)) {
+				active=false;
 				table.setModel(Model(null,null));
 				filter.setText("");
 				buttonReset.setVisible(false);
