@@ -26,17 +26,22 @@ import javax.swing.table.TableModel;
 import models.Product;
 import services.ProductServices;
 import services.ProviderServices;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 public class ListProductsView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JButton buttonBack,buttonUpdate,buttonDelete,buttonCreate;
+	private JButton buttonBack,buttonUpdate,buttonDelete,buttonCreate,buttonApply,buttonReset;
 	private static JTable table;
 	private int row;
 	private String imageRoute;
-	private JLabel image;
+	private JLabel image,labelFilter;
 	private static Map<Integer,Integer> mapId;
+	private static String[] colum = {"Name", "Description","Price","Category","Stock","Provider name"};
+	private JTextField filter;
+	private JComboBox typeFilter;
 
 	public ListProductsView() {
 		setBounds(100, 100, 790, 480);
@@ -50,10 +55,10 @@ public class ListProductsView extends JFrame {
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(21, 10, 525, 338);
+		scrollPane.setBounds(21, 81, 525, 267);
 		contentPane.add(scrollPane);
 		
-		table = new JTable(Model());
+		table = new JTable(Model(null,null));
 		scrollPane.setViewportView(table);
 		
 		buttonBack = new JButton("Back");
@@ -88,8 +93,38 @@ public class ListProductsView extends JFrame {
 	     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	     
 	     image = new JLabel("");
-	     image.setBounds(582, 90, 160, 141);
+	     image.setBounds(569, 122, 184, 160);
 	     contentPane.add(image);
+	     
+	     labelFilter = new JLabel("Filter:");
+	     labelFilter.setFont(new Font("Arial", Font.PLAIN, 14));
+	     labelFilter.setBounds(62, 25, 51, 21);
+	     contentPane.add(labelFilter);
+	     
+	     typeFilter = new JComboBox(colum);
+	     typeFilter.setFont(new Font("Arial", Font.PLAIN, 14));
+	     typeFilter.setBounds(113, 25, 116, 21);
+	     contentPane.add(typeFilter);
+	     
+	     filter = new JTextField();
+	     filter.setFont(new Font("Arial", Font.PLAIN, 14));
+	     filter.setBounds(247, 24, 116, 23);
+	     contentPane.add(filter);
+	     filter.setColumns(10);
+	     
+	     buttonApply = new JButton("Apply");
+	     buttonApply.setFont(new Font("Arial", Font.PLAIN, 14));
+	     buttonApply.setBounds(388, 23, 100, 25);
+	     buttonApply.addActionListener(l);
+	     contentPane.add(buttonApply);
+	     
+	     buttonReset = new JButton("Reset");
+	     buttonReset.setFont(new Font("Arial", Font.PLAIN, 14));
+	     buttonReset.setBounds(388, 23, 100, 25);
+	     buttonReset.addActionListener(l);
+	     contentPane.add(buttonReset);
+	     buttonReset.setVisible(false);
+	     
 	     table.getTableHeader().setResizingAllowed(false);
 	     table.getTableHeader().setReorderingAllowed(false);
 	     
@@ -109,7 +144,7 @@ public class ListProductsView extends JFrame {
 					
 					imageRoute=ProductServices.selectImageProduct(mapId.get(row));
 					ImageIcon icon = new ImageIcon(imageRoute);
-                    Image i = icon.getImage().getScaledInstance(112, 137, Image.SCALE_SMOOTH);
+                    Image i = icon.getImage().getScaledInstance(184, 160, Image.SCALE_SMOOTH);
                     ImageIcon img2 = new ImageIcon(i);
                     image.setIcon(img2);
                     image.setText(null);
@@ -118,14 +153,13 @@ public class ListProductsView extends JFrame {
 	     
 	}
 	
-	private TableModel Model() {
-		
-        String[] colum = {"Name", "Description","Price","Category","Stock","Provider name"};
+	private TableModel Model(String field, Object value) {
+        
         DefaultTableModel modelo = new DefaultTableModel(colum, 0);
         mapId=new HashMap<Integer,Integer>(); 
         Map<Integer, String> providerIdName = ProviderServices.selectProviderName(null, 0);
         int count=0;
-        for (Product p : ProductServices.selectProduct(null, null)) {
+        for (Product p : ProductServices.selectProduct(field, value)) {
             Object[] product = {p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getStock(),providerIdName.get(p.getId_provider())};
             modelo.addRow(product);
             mapId.put(count, p.getId());
@@ -157,7 +191,7 @@ public class ListProductsView extends JFrame {
 						File f=new File(imageRoute);
 						f.delete();
 						image.setIcon(null);
-						table.setModel(Model());
+						table.setModel(Model(null,null));
 						JOptionPane.showMessageDialog(ListProductsView.this, "Product deleted!");
 					}
 				}
@@ -166,6 +200,21 @@ public class ListProductsView extends JFrame {
 				dispose();
 				CreateProductView cpv=new CreateProductView();
 				cpv.setVisible(true);
+				
+			}else if(o.equals(buttonApply)) {
+				if(filter.getText().length()>0) {
+					table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+					buttonApply.setVisible(false);
+					buttonReset.setVisible(true);
+				}else
+					JOptionPane.showMessageDialog(ListProductsView.this, "You have not applied any filter!");
+				
+			}else if(o.equals(buttonReset)) {
+				table.setModel(Model(null,null));
+				filter.setText("");
+				buttonReset.setVisible(false);
+				buttonApply.setVisible(true);
+				
 			}
 		}
 	}
