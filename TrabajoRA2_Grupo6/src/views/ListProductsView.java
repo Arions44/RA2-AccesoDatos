@@ -106,7 +106,6 @@ public class ListProductsView extends JFrame {
 						buttonDelete.setEnabled(false);
 						buttonUpdate.setEnabled(false);
 					}
-					System.out.println(mapId.get(row));
 					
 					imageRoute=ProductServices.selectImageProduct(mapId.get(row));
 					ImageIcon icon = new ImageIcon(imageRoute);
