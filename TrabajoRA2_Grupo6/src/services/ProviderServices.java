@@ -40,9 +40,9 @@ public class ProviderServices {
 		if(field == null) {
 			sql += ";";
 		}else if(field.equalsIgnoreCase("id")){
-			sql += " WHERE(" + field + " = " + value +");";
+			sql += " WHERE( id  = " + value +");";
 		}else {
-			sql += " WHERE(" + field + " = \'" + value +"\');";
+			sql += " WHERE(" + field.toLowerCase() + " = \'" + value +"\');";
 		}
 		try {
 			Statement statement = conn.createStatement();
