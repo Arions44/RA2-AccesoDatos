@@ -139,6 +139,7 @@ public class ListProvidersView extends JFrame {
 		
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         int i=0;
+        mapId = new HashMap<Integer, Integer>();
         for (Provider p : ProviderServices.selectProvider(field, value)) {
             Object[] product = {p.getName(),p.getDescription(),p.getAddress(),p.getPhone()};
             model.addRow(product);
@@ -173,7 +174,6 @@ public class ListProvidersView extends JFrame {
 					if(ProductServices.deleteProduct(mapId.get(selectedRow))) {
 						table.setModel(UpdateTable(null,null));
 						JOptionPane.showMessageDialog(ListProvidersView.this, "Provider deleted");
-						
 					}
 				}
 				
