@@ -99,6 +99,39 @@ public class TradingService {
             e.printStackTrace();
         }
     }
+	
+	//Methodos to get the product and provider name using their Ids
+	public static String getProviderById(int providerId) {
+        String providerName = null;
+        String sql = "SELECT name FROM Provider WHERE id = ?";
+        try {
+            PreparedStatement statement = cnn.prepareStatement(sql);
+            statement.setInt(1, providerId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                providerName = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return providerName;
+    }
+	
+	public static String getProductById(int productId) {
+        String productName = null;
+        String sql = "SELECT name FROM Product WHERE id = ?";
+        try {
+            PreparedStatement statement = cnn.prepareStatement(sql);
+            statement.setInt(1, productId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                productName = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productName;
+    }
 
 	
 	

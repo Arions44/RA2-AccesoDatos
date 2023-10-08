@@ -70,7 +70,8 @@ public class HomeView extends JFrame {
 				lpv.setVisible(true);
 			}
 			else if(o.equals(buttonTransactions)) {
-				
+				new TransacctionView();
+				dispose();
 			}
 			else if(o.equals(buttonSignOut)) {
 				dispose();
