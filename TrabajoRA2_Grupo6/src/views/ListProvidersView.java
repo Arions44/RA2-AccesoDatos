@@ -11,9 +11,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import models.Product;
 import models.Provider;
-import services.ProductServices;
 import services.ProviderServices;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -141,8 +139,8 @@ public class ListProvidersView extends JFrame {
         int i=0;
         mapId = new HashMap<Integer, Integer>();
         for (Provider p : ProviderServices.selectProvider(field, value)) {
-            Object[] product = {p.getName(),p.getDescription(),p.getAddress(),p.getPhone()};
-            model.addRow(product);
+            Object[] provider = {p.getName(),p.getDescription(),p.getAddress(),p.getPhone()};
+            model.addRow(provider);
             mapId.put(i, p.getId());
             i++;
         }
@@ -151,6 +149,7 @@ public class ListProvidersView extends JFrame {
 	}
 
 	private class Listener implements ActionListener{
+		boolean filtered = false;
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
@@ -170,8 +169,8 @@ public class ListProvidersView extends JFrame {
 				
 				int option = JOptionPane.showConfirmDialog(ListProvidersView.this, "Are you sure you want to delete this provider?", "Confirmation", JOptionPane.YES_NO_OPTION);
 				
-				if(option==JOptionPane.YES_OPTION) {
-					if(ProductServices.deleteProduct(mapId.get(selectedRow))) {
+				if(option==JOptionPane.YES_OPTION) { 
+					if(ProviderServices.deleteProvider(mapId.get(selectedRow))) {
 						table.setModel(UpdateTable(null,null));
 						JOptionPane.showMessageDialog(ListProvidersView.this, "Provider deleted");
 					}
@@ -184,14 +183,21 @@ public class ListProvidersView extends JFrame {
 				pv.setVisible(true);
 				
 			}else if(o.equals(btnApply)) {
-				table.setModel(UpdateTable((String)comboBoxFilter.getSelectedItem(),textFilter.getText()));
-				btnApply.setVisible(false);
-				btnApply.setEnabled(false);
-				btnReset.setVisible(true);
-				btnReset.setEnabled(true);
+				
+				filtered = true;
+				if(textFilter.getText().length()!=0) {
+					table.setModel(UpdateTable((String)comboBoxFilter.getSelectedItem(),textFilter.getText()));
+					btnApply.setVisible(false);
+					btnApply.setEnabled(false);
+					btnReset.setVisible(true);
+					btnReset.setEnabled(true);
+				}else {
+					JOptionPane.showMessageDialog(ListProvidersView.this, "Filter cant be null");
+				}
 				
 			}else if(o.equals(btnReset)) {
 				
+				filtered = false;
 				table.setModel(UpdateTable(null,null));
 				textFilter.setText("");
 				btnApply.setVisible(true);

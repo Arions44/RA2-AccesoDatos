@@ -115,9 +115,12 @@ public class ProviderView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
+			
 			if(o.equals(btnBack)) {
 				goBack();
+				
 			}else if(o.equals(btnEdit)) {
+				
 				btnSave.setVisible(true);
 				btnEdit.setVisible(false);
 				textName.setEditable(true);
@@ -125,6 +128,7 @@ public class ProviderView extends JFrame {
 				textAddress.setEditable(true);
 				textPhone.setEditable(true);
 			}else if(o.equals(btnSave)) {
+				
 				if(matchesProviderFields()) {
 					if(id!=-1) {
 						if(ProviderServices.updateProvider(id, textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText())) {
@@ -132,19 +136,25 @@ public class ProviderView extends JFrame {
 						}else {
 							JOptionPane.showMessageDialog(ProviderView.this, "Error");
 						}
+						goBack();
 							
 					}else {
 						if(ProviderServices.insertProvider(new Provider(textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText()))) {
 							JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
+							textName.setText("");
+							textDescription.setText("");
+							textAddress.setText("");
+							textPhone.setText("");
 						}else {
 							JOptionPane.showMessageDialog(ProviderView.this, "Error");
 						}
 					}
-					goBack();
 				}
 			}
+			
 		}
 		private void goBack() {
+			
 			dispose();
 			ListProvidersView lpv=new ListProvidersView();
 			lpv.setVisible(true);
