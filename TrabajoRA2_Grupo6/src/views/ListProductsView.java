@@ -161,10 +161,12 @@ public class ListProductsView extends JFrame {
         providerIdName = ProviderServices.selectProviderName(null, 0);
         int count=0;
         for (Product p : ProductServices.selectProduct(field, value)) {
-            Object[] product = {p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getStock(),providerIdName.get(p.getId_provider())};
-            modelo.addRow(product);
-            mapId.put(count, p.getId());
-            count++;
+        	if(p.getAvailable()==1) {
+	            Object[] product = {p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getStock(),providerIdName.get(p.getId_provider())};
+	            modelo.addRow(product);
+	            mapId.put(count, p.getId());
+	            count++;
+        	}
         }
         
         return modelo;
@@ -196,9 +198,13 @@ public class ListProductsView extends JFrame {
 						f.delete();
 						image.setIcon(null);
 						if(active) {
-							table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+							if(typeFilter.getSelectedItem().equals("Provider name")) {
+								table.setModel(Model((String)typeFilter.getSelectedItem(),getKeyFromValue(filter.getText())));
+							}else {
+								table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+							}
 						}
-						else if(!active) {
+						else {
 							table.setModel(Model(null,null));
 						}
 						buttonDelete.setEnabled(false);
@@ -245,7 +251,6 @@ public class ListProductsView extends JFrame {
 	private static int getKeyFromValue(String value) {
         for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
             if (entry.getValue().equals(value)) {
-            	System.out.println(entry.getKey());
                 return entry.getKey();
             }
         }

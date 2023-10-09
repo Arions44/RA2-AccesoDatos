@@ -7,19 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import models.Product;
 import models.Provider;
 
 public class ProductServices {
 	static Connection conn=AzureSql.createConnection();
+	static ResultSet resultSet=null;
 	
 	public static boolean insertProduct(Product p) {
-		ResultSet resultSet=null;
 		
 		
 		String sql="INSERT INTO Product VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', "+p.getPrice()
-				+", \'"+p.getCategory()+"\', \'"+p.getImage()+"\', "+p.getStock()+", "+p.getId_provider()+");";
+				+", \'"+p.getCategory()+"\', \'"+p.getImage()+"\', "+p.getStock()+", "+p.getId_provider()+", "+p.getAvailable()+");";
 		try {
 			PreparedStatement statement=conn.prepareStatement(sql);
 			statement.execute();
@@ -50,20 +52,22 @@ public class ProductServices {
 	public static ArrayList<Product> selectProduct(String field, Object value){
 		
 		ArrayList<Product> products = new ArrayList<Product>();
-		ResultSet resultSet = null;
 		String sql = "SELECT * FROM Product";
 		if(field == null) {
 			sql += ";";
-		}else if(field.equalsIgnoreCase("id") || field.equalsIgnoreCase("id_provider")){
+		}else if(field.equalsIgnoreCase("id")){
 			sql += " WHERE(" + field + " = " + value +");";
-		}else {
+		}else if(field.equalsIgnoreCase("Provider name")){
+			sql += " WHERE( id_Provider = " + value +");";
+		}
+		else {
 			sql += " WHERE(" + field + " = \'" + value +"\');";
 		}
 		try {
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			while(resultSet.next()) {
-				products.add(new Product(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getFloat(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8)));
+				products.add(new Product(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getFloat(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8),resultSet.getInt(9)));
 			}
 			
 		} catch (SQLException e) {
@@ -71,6 +75,29 @@ public class ProductServices {
 			e.printStackTrace();
 		}
 		return products;
+	}
+	
+	public static Map<Integer, String> selectProductName(String field, int id){ 
+		Map<Integer, String> productIdName = new HashMap<Integer,String>();
+		String sql = "SELECT id, name, available FROM Product";
+		if(field == null) {
+			sql += ";";
+		}else if(field.equalsIgnoreCase("id")){
+			sql += " WHERE(" + field + " = " + id +");";
+		}
+		try {
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			
+			while(resultSet.next()) {
+				if(resultSet.getInt(3)==1)
+					productIdName.put(resultSet.getInt(1), resultSet.getString(2));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return productIdName;
 	}
 	
 	public static String selectImageProduct(int value){
@@ -94,7 +121,7 @@ public class ProductServices {
 	
 	public static boolean deleteProduct(int id) {
 		
-		String sql = "DELETE FROM Product WHERE( id = "+id+");";
+		String sql = "UPDATE Product SET available = "+0+" WHERE id = "+id+";";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

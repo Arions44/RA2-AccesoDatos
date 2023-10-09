@@ -6,6 +6,7 @@ public class Product {
 	private int id,stock,id_provider;
 	private String name,description,category,image;
 	private float price;
+	private int available;
 	
 	public Product() {
 		super();
@@ -21,10 +22,11 @@ public class Product {
 		this.image = image;
 		this.stock = 0;
 		this.id_provider = id_provider;
+		this.available = 1;
 	}
 	
 	public Product(int id, String name, String description, float price, String category, String image, int stock,
-			int id_provider) {
+			int id_provider, int available) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -34,6 +36,7 @@ public class Product {
 		this.image = image;
 		this.stock = stock;
 		this.id_provider = id_provider;
+		this.available = available;
 	}
 
 	public int getId() {
@@ -100,11 +103,19 @@ public class Product {
 		this.id_provider = id_provider;
 	}
 
+	public int getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(int available) {
+		this.available = available;
+	}
+
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", description=" + description + ", price=" + price
-				+ ", category=" + category + ", image=" + image + ", stock=" + stock + ", id_provider=" + id_provider
-				+ "]";
+		return "Product [id=" + id + ", stock=" + stock + ", id_provider=" + id_provider + ", name=" + name
+				+ ", description=" + description + ", category=" + category + ", image=" + image + ", price=" + price
+				+ ", available=" + available + "]";
 	}
-	
+
 }
