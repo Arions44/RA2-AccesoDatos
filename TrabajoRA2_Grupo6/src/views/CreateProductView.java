@@ -174,20 +174,34 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				
-				if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
-						(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
-					if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-			    		try {
-							Files.copy(Paths.get(image.getToolTipText()), finalPath);
-						} catch (IOException e1) {
-							e1.printStackTrace();
+				if(name.getText().length()==0) {
+					JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
+				}else if(description.getText().length()==0) {
+					JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
+				}else if(price.getText().length()==0) {
+					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
+				}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
+					JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
+				}else if(Float.valueOf(price.getText())<=0){
+					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
+				}else {
+					if(!(pathImage==null)) {
+						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
+								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
+							if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+					    		try {
+									Files.copy(Paths.get(image.getToolTipText()), finalPath);
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+					    	}
+							JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
 						}
-			    	}
-					JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
+					}
+					else {
+						JOptionPane.showMessageDialog(CreateProductView.this, "You have not selected any images");
+					}
 				}
-		    	
-				
 			}
 		}
 		
