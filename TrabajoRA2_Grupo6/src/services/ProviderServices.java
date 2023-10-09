@@ -1,7 +1,6 @@
 package services;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +19,7 @@ public class ProviderServices {
 	
 	public static boolean insertProvider(Provider p) { //Insert into table by a given provider
 		
-		String sql = "INSERT INTO Provider VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', \'"+p.getAddress()+"\', \'"+p.getPhone()+"\');";
+		String sql = "INSERT INTO Provider VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', \'"+p.getAddress()+"\', \'"+p.getPhone()+"\', "+p.getActive()+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql); //Prepare sql query
 			statement.execute(); //Execution of the prepared query
@@ -48,7 +47,7 @@ public class ProviderServices {
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
 			while(resultSet.next()) {
-				providers.add(new Provider(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getString(5)));
+				providers.add(new Provider(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
 			}
 			
 		} catch (SQLException e) {
@@ -59,8 +58,8 @@ public class ProviderServices {
 	
 	public static Map<Integer, String> selectProviderName(String field, int id){ //Return provider by a given field and value when filtered or return every provider when parameters are null
 		
-		Map<Integer, String> ProviderIdName = new HashMap<Integer,String>();
-		String sql = "SELECT id, name FROM Provider";
+		Map<Integer, String> providerIdName = new HashMap<Integer,String>();
+		String sql = "SELECT id, name, active FROM Provider";
 		if(field == null) {
 			sql += ";";
 		}else if(field.equalsIgnoreCase("id")){
@@ -69,14 +68,16 @@ public class ProviderServices {
 		try {
 			Statement statement = conn.createStatement();
 			resultSet = statement.executeQuery(sql);
+			
 			while(resultSet.next()) {
-				ProviderIdName.put(resultSet.getInt(1), resultSet.getString(2));
+				if(resultSet.getInt(3)==1)
+					providerIdName.put(resultSet.getInt(1), resultSet.getString(2));
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return ProviderIdName;
+		return providerIdName;
 	}
 	
 	public static boolean updateProvider(int id, String name,String description,String address,String phone) { //Update provider
@@ -95,7 +96,7 @@ public class ProviderServices {
 	
 	public static boolean deleteProvider(int id) { //Delete provider by id
 		
-		String sql = "DELETE FROM Provider WHERE( id = "+id+");";
+		String sql = "UPDATE Provider SET active = 0 WHERE( id = "+id+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

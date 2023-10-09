@@ -29,13 +29,12 @@ public class ListProvidersView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JButton btnBack,btnView,btnDelete,btnCreate;
-	private static JTable table;
+	private JTable table;
 	private int selectedRow;
-	private static Map<Integer,Integer> mapId=new HashMap<Integer,Integer>();
+	private Map<Integer,Integer> mapId=new HashMap<Integer,Integer>();
 	private JTextField textFilter;
 	private JComboBox comboBoxFilter;
 	private JButton btnApply;
-	private JButton button;
 	private JButton btnReset;
 	private String[] columns = {"Name", "Description","Address","Phone"};
 
@@ -139,10 +138,12 @@ public class ListProvidersView extends JFrame {
         int i=0;
         mapId = new HashMap<Integer, Integer>();
         for (Provider p : ProviderServices.selectProvider(field, value)) {
-            Object[] provider = {p.getName(),p.getDescription(),p.getAddress(),p.getPhone()};
-            model.addRow(provider);
-            mapId.put(i, p.getId());
-            i++;
+        	if(p.getActive()==1) {
+	            Object[] provider = {p.getName(),p.getDescription(),p.getAddress(),p.getPhone()};
+	            model.addRow(provider);
+	            mapId.put(i, p.getId());
+	            i++;
+        	}
         }
         
         return model;
@@ -171,13 +172,18 @@ public class ListProvidersView extends JFrame {
 				
 				if(option==JOptionPane.YES_OPTION) { 
 					if(ProviderServices.deleteProvider(mapId.get(selectedRow))) {
-						table.setModel(UpdateTable(null,null));
+						if(filtered) {
+							table.setModel(UpdateTable((String)comboBoxFilter.getSelectedItem(),textFilter.getText()));
+						}else {
+							table.setModel(UpdateTable(null,null));
+						}
 						filtered = false;
 						btnReset.setVisible(false);
 						btnApply.setVisible(true);
 						textFilter.setText("");
 						textFilter.setEditable(true);
 						JOptionPane.showMessageDialog(ListProvidersView.this, "Provider deleted");
+						
 					}
 				}
 				

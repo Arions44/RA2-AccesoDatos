@@ -4,7 +4,7 @@ import services.ProviderServices;
 
 public class Provider {
 	
-	private int id;
+	private int id, active;
 	private String name,description,address,phone;
 	
 	public Provider(String name, String description, String address, String phone) {
@@ -14,14 +14,16 @@ public class Provider {
 		this.description = description;
 		this.address = address;
 		this.phone = phone;
+		this.active = 1;
 	}
-	public Provider(int id, String name, String description, String address, String phone) {
+	public Provider(int id, String name, String description, String address, String phone, int active) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.address = address;
 		this.phone = phone;
+		this.active = active;
 	}
 	
 	public int getId() {
@@ -54,12 +56,17 @@ public class Provider {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public int getActive() {
+		return active;
+	}
+	public void setActive(int active) {
+		this.active = active;
+	}
 	
 	@Override
 	public String toString() {
 		return "Provider [id=" + id + ", name=" + name + ", description=" + description + ", address=" + address
-				+ ", phone=" + phone + "]";
+				+ ", phone=" + phone + ", active=" + active + "]";
 	}
-	
 	
 }
