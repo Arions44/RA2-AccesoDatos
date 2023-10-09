@@ -34,24 +34,24 @@ public class TradingService {
 		return id + 1;
 	}
 	
-	public static boolean insertTrading(Trading t, String transactionType) {
+	public static boolean insertTrading(Trading t) {
 		String sql = "INSERT INTO Trading VALUES("+t.getId()+", "+t.getId_product()+", "+t.getId_provider()
 		+", "+t.getAmount()+", \'"+new SimpleDateFormat("yyyy-MM-dd").format(t.getDate())+"\', \'"+t.getType()+"\');";
 		try {
 			PreparedStatement statement = cnn.prepareStatement(sql);
 			statement.execute();
-			statement.setInt(1, t.getId());
-            statement.setInt(2, t.getId_product());
-            statement.setInt(3, t.getId_provider());
-            statement.setInt(4, t.getAmount());
-            statement.setString(5, new SimpleDateFormat("yyyy-MM-dd").format(t.getDate()));
-            statement.setString(6, transactionType); //("sell" or "buy")
-            statement.execute();
+//			statement.setInt(1, t.getId());
+//            statement.setInt(2, t.getId_product());
+//            statement.setInt(3, t.getId_provider());
+//            statement.setInt(4, t.getAmount());
+//            statement.setString(5, new SimpleDateFormat("yyyy-MM-dd").format(t.getDate()));
+//            statement.setString(6, t.getType()); //("sell" or "buy")
+//            statement.execute();
             
             //Here I update the stock after each transaction
-            if (transactionType.equals("buy")) {
+            if (t.getType().equals("buy")) {
                 updateProductStock(t.getId_product(), t.getAmount()); //Increment stock
-            } else if (transactionType.equals("sell")) {
+            } else if (t.getType().equals("sell")) {
                 updateProductStock(t.getId_product(), -t.getAmount()); //Decrement stock
             }
 			return true;
@@ -89,7 +89,7 @@ public class TradingService {
 	
 	//Method to increment o decrement the stock of the products in the data base
 	private static void updateProductStock(int productId, int amountChange) {
-        String sql = "UPDATE Products SET stock = stock + ? WHERE id = ?";
+        String sql = "UPDATE Product SET stock = stock + ? WHERE id = ?";
         try {
             PreparedStatement statement = cnn.prepareStatement(sql);
             statement.setInt(1, amountChange);

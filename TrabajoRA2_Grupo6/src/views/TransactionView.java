@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +25,9 @@ import javax.swing.table.TableModel;
 import org.jdatepicker.JDateComponentFactory;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.impl.UtilDateModel;
+
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 import models.Trading;
 import services.TradingService;
@@ -37,11 +41,12 @@ public class TransactionView extends JFrame{
 	private static Map<Integer,Integer> mapId=new HashMap<Integer,Integer>();
 	private JComboBox comboBoxFilter;
 	private String[] columns = {"Product", "Provider", "Amount", "Date", "Type"};
-	private String[] filter = {"Buy", "Sell", "All"};
+	private String[] filter = {"Buy", "Sell", "All", "Date"};
 	private JButton btnApply;
 	private String selectedFilter = "";
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JDatePicker datePicker;
+	private JDateChooser dateChooser;
 
 
 	public TransactionView() {
@@ -81,14 +86,22 @@ public class TransactionView extends JFrame{
 	    contentPane.add(lblFilter);
 	    
 
-	    datePicker = new JDateComponentFactory().createJDatePicker();
-	    datePicker.setTextEditable(true);
-	    datePicker.setShowYearButtons(true);
-	    ((JComponent) datePicker).setBounds(223, 19, 170, 22); 
-	    add((JComponent) datePicker);
+//	    datePicker = new JDateComponentFactory().createJDatePicker();
+//	    datePicker.setTextEditable(true);
+//	    datePicker.setShowYearButtons(true);
+//	    ((JComponent) datePicker).setBounds(223, 19, 170, 22); 
+//	    add((JComponent) datePicker);
+	   
+	    dateChooser = new JDateChooser();
+        dateChooser.setBounds(223, 19, 170, 22);
+        contentPane.add(dateChooser);
 
-	    UtilDateModel model = new UtilDateModel();
-	    model.setDate(1990, 8, 24);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateChooser.setDateFormatString("dd/MM/yyyy");
+        JTextFieldDateEditor editor = (JTextFieldDateEditor) dateChooser.getDateEditor();
+        editor.setHorizontalAlignment(JTextField.RIGHT);
+//	    UtilDateModel model = new UtilDateModel();
+//	    model.setDate(1990, 8, 24);
 	    
 
 
@@ -155,7 +168,32 @@ public class TransactionView extends JFrame{
 		                    mapId.put(i, t.getId());
 		                    i++;
 		                }
-	            } else {
+	            } else if(selectedFilter.equalsIgnoreCase("Date")){
+	            	 Date selectedDate = dateChooser.getDate();
+	                    if (selectedDate != null) {
+	                        String formattedDateFilter = dateFormat.format(selectedDate);
+	                        for (Trading t : TradingService.selectTrading("date", new SimpleDateFormat("yyyy-MM-dd").format(selectedDate))) {
+	                            String productName = TradingService.getProductById(t.getId_product());
+	                            String providerName = TradingService.getProviderById(t.getId_provider());
+	                            Date tradingDate = t.getDate();
+	                            String formattedDate = dateFormat.format(tradingDate);
+	                            Object[] trade = {productName, providerName, t.getAmount(), formattedDate, t.getType()};
+	                            model.addRow(trade);
+	                            mapId.put(i, t.getId());
+	                            i++;
+	                        }
+	                    } else {
+	                        for (Trading t : TradingService.selectTrading(null, selectedDate)) {
+	                            String productName = TradingService.getProductById(t.getId_product());
+	                            String providerName = TradingService.getProviderById(t.getId_provider());
+	                            Date tradingDate = t.getDate();
+	                            String formattedTradingDate = dateFormat.format(tradingDate);
+	                            Object[] trade = {productName, providerName, t.getAmount(), formattedTradingDate, t.getType()};
+	                            model.addRow(trade);
+	                            mapId.put(i, t.getId());
+	                            i++;
+	                        }
+	                    }
 //	            	Date selectedDate = (Date) datePicker.getModel().getValue();
 //	                if (selectedDate != null) {
 //	                    String formattedDateFilter = dateFormat.format(selectedDate);
