@@ -172,6 +172,11 @@ public class ListProvidersView extends JFrame {
 				if(option==JOptionPane.YES_OPTION) { 
 					if(ProviderServices.deleteProvider(mapId.get(selectedRow))) {
 						table.setModel(UpdateTable(null,null));
+						filtered = false;
+						btnReset.setVisible(false);
+						btnApply.setVisible(true);
+						textFilter.setText("");
+						textFilter.setEditable(true);
 						JOptionPane.showMessageDialog(ListProvidersView.this, "Provider deleted");
 					}
 				}
@@ -184,13 +189,13 @@ public class ListProvidersView extends JFrame {
 				
 			}else if(o.equals(btnApply)) {
 				
-				filtered = true;
 				if(textFilter.getText().length()!=0) {
 					table.setModel(UpdateTable((String)comboBoxFilter.getSelectedItem(),textFilter.getText()));
+					filtered = true;
 					btnApply.setVisible(false);
-					btnApply.setEnabled(false);
 					btnReset.setVisible(true);
-					btnReset.setEnabled(true);
+					textFilter.setEditable(false);
+
 				}else {
 					JOptionPane.showMessageDialog(ListProvidersView.this, "Filter cant be null");
 				}
@@ -199,11 +204,10 @@ public class ListProvidersView extends JFrame {
 				
 				filtered = false;
 				table.setModel(UpdateTable(null,null));
+				textFilter.setEditable(true);
 				textFilter.setText("");
 				btnApply.setVisible(true);
-				btnApply.setEnabled(true);
 				btnReset.setVisible(false);
-				btnReset.setEnabled(false);
 				
 			}
 		}
