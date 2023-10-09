@@ -26,7 +26,6 @@ public class ProviderServices {
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("a");
 			return false;
 		}
 		
