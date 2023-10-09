@@ -81,38 +81,48 @@ public class RegisterView extends JFrame {
 			Object o=e.getSource();
 			
 			if(o.equals(buttonRegister)) {
-				boolean repeated = false;
-				for(String u : UserServices.selectUsername()) {
-					if(u.equalsIgnoreCase(username.getText()))
-						repeated = true;
-				}
-				if(!repeated) {
-					if(MatchesPassword(String.valueOf(password.getPassword()))) {
-						if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword()))) {
-							if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword())))){
-								JOptionPane.showMessageDialog(RegisterView.this, "User created");
-								dispose();
-								LoginView lv=new LoginView();
-								lv.setVisible(true);
+				
+				if(MatchesUser(String.valueOf(username.getText()))) {
+					boolean repeated = false;
+					for(String u : UserServices.selectUsername()) {
+						if(u.equalsIgnoreCase(username.getText()))
+							repeated = true;
+					}
+					if(!repeated) {
+						if(MatchesPassword(String.valueOf(password.getPassword()))) {
+							if(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConfirm.getPassword()))) {
+								if(UserServices.insertUser(new User(username.getText(), String.valueOf(password.getPassword())))){
+									JOptionPane.showMessageDialog(RegisterView.this, "User created");
+									dispose();
+									LoginView lv=new LoginView();
+									lv.setVisible(true);
+								}
+								else {
+									JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
+								}
 							}
 							else {
-								JOptionPane.showMessageDialog(RegisterView.this, "Error creating the user");
+								JOptionPane.showMessageDialog(RegisterView.this, "Password doesn't matches");
 							}
 						}
-						else {
-							JOptionPane.showMessageDialog(RegisterView.this, "Password doesn't matches");
-						}
 					}
-					
+					else {
+						JOptionPane.showMessageDialog(RegisterView.this, "This username already exists, use another username");
+					}
 				}
-				else {
-					JOptionPane.showMessageDialog(RegisterView.this, "This username already exists, use another username");
-				}	
 			}else if(o.equals(buttonBack)) {
 				dispose();
 				LoginView lv=new LoginView();
 				lv.setVisible(true);
 			}
+		}
+
+		private boolean MatchesUser(String user) {
+			if(!user.matches("^(.)\\s(.)")) {
+				JOptionPane.showMessageDialog(RegisterView.this, "User cannot have spaces");
+				return false;
+			}
+			return false;
 		}
 
 		private boolean MatchesPassword(String pass) {
