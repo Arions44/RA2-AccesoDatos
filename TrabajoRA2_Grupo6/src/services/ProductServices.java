@@ -13,6 +13,7 @@ import models.Provider;
 
 public class ProductServices {
 	static Connection conn=AzureSql.createConnection();
+	
 	public static boolean insertProduct(Product p) {
 		ResultSet resultSet=null;
 		
@@ -53,7 +54,7 @@ public class ProductServices {
 		String sql = "SELECT * FROM Product";
 		if(field == null) {
 			sql += ";";
-		}else if(field.equalsIgnoreCase("id")){
+		}else if(field.equalsIgnoreCase("id") || field.equalsIgnoreCase("id_provider")){
 			sql += " WHERE(" + field + " = " + value +");";
 		}else {
 			sql += " WHERE(" + field + " = \'" + value +"\');";

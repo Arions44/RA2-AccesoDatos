@@ -39,6 +39,7 @@ public class ListProductsView extends JFrame {
 	private String imageRoute;
 	private JLabel image,labelFilter;
 	private static Map<Integer,Integer> mapId;
+	private static  Map<Integer, String> providerIdName;
 	private static String[] colum = {"Name", "Description","Price","Category","Stock","Provider name"};
 	private JTextField filter;
 	private JComboBox typeFilter;
@@ -157,7 +158,7 @@ public class ListProductsView extends JFrame {
         
         DefaultTableModel modelo = new DefaultTableModel(colum, 0);
         mapId=new HashMap<Integer,Integer>(); 
-        Map<Integer, String> providerIdName = ProviderServices.selectProviderName(null, 0);
+        providerIdName = ProviderServices.selectProviderName(null, 0);
         int count=0;
         for (Product p : ProductServices.selectProduct(field, value)) {
             Object[] product = {p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getStock(),providerIdName.get(p.getId_provider())};
@@ -214,12 +215,18 @@ public class ListProductsView extends JFrame {
 			}else if(o.equals(buttonApply)) {
 				if(filter.getText().length()>0) {
 					active=true;
-					table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+					
+					if(typeFilter.getSelectedItem().equals("Provider name")) {
+						table.setModel(Model("id_provider",getKeyFromValue(filter.getText())));
+					}else {
+						table.setModel(Model((String)typeFilter.getSelectedItem(),filter.getText()));
+					}
 					buttonApply.setVisible(false);
 					buttonReset.setVisible(true);
 					
 					buttonDelete.setEnabled(false);
 					buttonUpdate.setEnabled(false);
+					filter.setEditable(false);
 					image.setIcon(null);
 				}else
 					JOptionPane.showMessageDialog(ListProductsView.this, "You have not applied any filter!");
@@ -230,8 +237,18 @@ public class ListProductsView extends JFrame {
 				filter.setText("");
 				buttonReset.setVisible(false);
 				buttonApply.setVisible(true);
-				
+				filter.setEditable(true);
 			}
 		}
 	}
+	
+	private static int getKeyFromValue(String value) {
+        for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
+            if (entry.getValue().equals(value)) {
+            	System.out.println(entry.getKey());
+                return entry.getKey();
+            }
+        }
+        return 0;
+   }
 }

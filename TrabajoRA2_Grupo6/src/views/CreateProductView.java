@@ -238,5 +238,5 @@ public class CreateProductView extends JFrame {
 	            }
 	        }
 	        return 0;
-	    }
+	   }
 }
