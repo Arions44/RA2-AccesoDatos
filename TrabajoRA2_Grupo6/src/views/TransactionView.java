@@ -36,7 +36,7 @@ public class TransactionView extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JButton btnBack, btnAdd;
+	private JButton btnBack, btnAdd, btnDownload, btnUpdate;
 	private static JTable table;
 	private static Map<Integer,Integer> mapId=new HashMap<Integer,Integer>();
 	private JComboBox comboBoxFilter;
@@ -45,7 +45,6 @@ public class TransactionView extends JFrame{
 	private JButton btnApply;
 	private String selectedFilter = "";
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private JDatePicker datePicker;
 	private JDateChooser dateChooser;
 
 
@@ -59,7 +58,7 @@ public class TransactionView extends JFrame{
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(21, 53, 525, 295);
+		scrollPane.setBounds(21, 53, 525, 203);
 		contentPane.add(scrollPane);
 		
 		table = new JTable(UpdateTable(null ,null));
@@ -67,13 +66,13 @@ public class TransactionView extends JFrame{
 		
 		btnBack = new JButton("Back");
 		btnBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnBack.setBounds(10, 417, 68, 21);
+		btnBack.setBounds(21, 277, 68, 21);
 		getContentPane().add(btnBack);
 		
 		
-		btnAdd = new JButton("Create");
+		btnAdd = new JButton("Add");
 		btnAdd.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnAdd.setBounds(450, 373, 100, 40);
+		btnAdd.setBounds(446, 266, 100, 27);
 		getContentPane().add(btnAdd);
 		
 		table.setRowSelectionAllowed(true);
@@ -82,40 +81,38 @@ public class TransactionView extends JFrame{
 	    
 	    JLabel lblFilter = new JLabel("Filter:");
 	    lblFilter.setFont(new Font("Arial", Font.PLAIN, 14));
-	    lblFilter.setBounds(62, 22, 41, 14);
+	    lblFilter.setBounds(21, 29, 41, 14);
 	    contentPane.add(lblFilter);
 	    
-
-//	    datePicker = new JDateComponentFactory().createJDatePicker();
-//	    datePicker.setTextEditable(true);
-//	    datePicker.setShowYearButtons(true);
-//	    ((JComponent) datePicker).setBounds(223, 19, 170, 22); 
-//	    add((JComponent) datePicker);
-	   
 	    dateChooser = new JDateChooser();
-        dateChooser.setBounds(223, 19, 170, 22);
+        dateChooser.setBounds(129, 25, 141, 22);
         contentPane.add(dateChooser);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dateChooser.setDateFormatString("dd/MM/yyyy");
         JTextFieldDateEditor editor = (JTextFieldDateEditor) dateChooser.getDateEditor();
         editor.setHorizontalAlignment(JTextField.RIGHT);
-//	    UtilDateModel model = new UtilDateModel();
-//	    model.setDate(1990, 8, 24);
-	    
-
-
 	    
 	    comboBoxFilter = new JComboBox(filter);
 	    comboBoxFilter.setFont(new Font("Arial", Font.PLAIN, 14));
-	    comboBoxFilter.setBounds(113, 19, 100, 22);
+	    comboBoxFilter.setBounds(60, 25, 59, 22);
 	    contentPane.add(comboBoxFilter);
 	   
 		
 	    btnApply = new JButton("Apply");
 	    btnApply.setFont(new Font("Arial", Font.PLAIN, 14));
-	    btnApply.setBounds(403, 19, 89, 22);
+	    btnApply.setBounds(280, 25, 79, 22);
 	    contentPane.add(btnApply);
+	    
+	    btnDownload = new JButton("Download Report");
+	    btnDownload.setFont(new Font("Tahoma", Font.PLAIN, 14));
+	    btnDownload.setBounds(369, 25, 177, 23);
+	    contentPane.add(btnDownload);
+	    
+	    btnUpdate = new JButton("Update");
+	    btnUpdate.setFont(new Font("Arial", Font.PLAIN, 14));
+	    btnUpdate.setBounds(332, 266, 100, 27);
+	    contentPane.add(btnUpdate);
 	    
 		ManejadorClass manejador=new ManejadorClass();
 	    btnAdd.addActionListener(manejador);
@@ -138,8 +135,12 @@ public class TransactionView extends JFrame{
 	            new AddTransactionView();
 	            dispose();
 	        } else if (btn == btnBack) {
-	            new HomeView();
+	            HomeView hv=new HomeView();
+	            hv.setVisible(true);
 	            dispose();
+	        } else if(btn==btnUpdate) {
+	        	new UpdateTransactionView();
+	        	dispose();
 	        } else if (btn == comboBoxFilter) {
 	        	selectedFilter = comboBoxFilter.getSelectedItem().toString();
 	        } else if (btn == btnApply) {
@@ -194,38 +195,13 @@ public class TransactionView extends JFrame{
 	                            i++;
 	                        }
 	                    }
-//	            	Date selectedDate = (Date) datePicker.getModel().getValue();
-//	                if (selectedDate != null) {
-//	                    String formattedDateFilter = dateFormat.format(selectedDate);
-//		                for (Trading t : TradingService.selectTrading(null, selectedDate)) {
-//		                    String productName = TradingService.getProductById(t.getId_product());
-//		                    String providerName = TradingService.getProviderById(t.getId_provider());
-//		                    String formattedDate = dateFormat.format(t.getDate().getTime());
-//		                    Object[] trade = {productName, providerName, t.getAmount(), formattedDate, t.getType()};
-//		                    model.addRow(trade);
-//		                    mapId.put(i, t.getId());
-//		                    i++;
-//		                }
-//	                }else {
-//	                    for (Trading t : TradingService.selectTrading(null, selectedDate)) {
-//	                        String productName = TradingService.getProductById(t.getId_product());
-//	                        String providerName = TradingService.getProviderById(t.getId_provider());
-//	                        String formattedTradingDate = dateFormat.format(t.getDate().getTime());
-//	                        Object[] trade = {productName, providerName, t.getAmount(), formattedTradingDate, t.getType()};
-//	                        model.addRow(trade);
-//	                        mapId.put(i, t.getId());
-//	                        i++;
-//	                    }
-//	                }
 	                
 	            }
 	        }
 		}
 	}
-	
-	
 	private TableModel UpdateTable(String field, String value) {
-			
+		
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         int i=0;
         mapId = new HashMap<Integer, Integer>();
