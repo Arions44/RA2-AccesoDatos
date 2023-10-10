@@ -171,7 +171,7 @@ public class ListProvidersView extends JFrame {
 				int option = JOptionPane.showConfirmDialog(ListProvidersView.this, "Are you sure you want to delete this provider?", "Confirmation", JOptionPane.YES_NO_OPTION);
 				
 				if(option==JOptionPane.YES_OPTION) { 
-					if(ProviderServices.activateOrDeactivateProvider(mapId.get(selectedRow),false)) {
+					if(ProviderServices.deleteProvider(mapId.get(selectedRow))) {
 						if(filtered) {
 							table.setModel(UpdateTable((String)comboBoxFilter.getSelectedItem(),textFilter.getText()));
 						}else {

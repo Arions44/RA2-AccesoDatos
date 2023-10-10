@@ -79,9 +79,9 @@ public class ProviderServices {
 		return providerIdName;
 	}
 	
-	public static boolean updateProvider(int id, String name,String description,String address,String phone) { //Update provider
+	public static boolean updateProvider(int id, String name,String description,String address,String phone, int active) { //Update provider
 		
-		String sql = "UPDATE Provider SET name = \'"+name+"\', description = \'"+description+"\', address = \'"+address+"\', phone = \'"+phone+"\' WHERE id = "+id;
+		String sql = "UPDATE Provider SET name = \'"+name+"\', description = \'"+description+"\', address = \'"+address+"\', phone = \'"+phone+"\', active = "+active+" WHERE id = "+id;
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
@@ -93,15 +93,9 @@ public class ProviderServices {
 		
 	}
 	
-	public static boolean activateOrDeactivateProvider(int id, boolean option) { //Delete provider by id
+	public static boolean deleteProvider(int id) { //Delete provider by id
 		
-		String sql ="";
-		if(option) {
-			sql = "UPDATE Provider SET active = 1 WHERE( id = "+id+");";
-			System.out.println("a");
-		}
-		else
-			sql = "UPDATE Provider SET active = 0 WHERE( id = "+id+");";
+		String sql = "UPDATE Provider SET active = 0 WHERE( id = "+id+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

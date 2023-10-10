@@ -26,6 +26,7 @@ public class ProviderView extends JFrame {
 	private JButton btnEdit;
 	private JButton btnSave;
 	private Listener l=new Listener();
+	private Provider provider = null;
 	private int id = 0;
 
 	public ProviderView(int id) {
@@ -92,6 +93,7 @@ public class ProviderView extends JFrame {
 		btnSave.addActionListener(l);
 		
 		if(id!=-1) {
+			provider = ProviderServices.selectProvider("id", id).get(0);
 			setProviderValues(ProviderServices.selectProvider("id", id).get(0));
 		}
 		
@@ -132,7 +134,7 @@ public class ProviderView extends JFrame {
 				
 				if(matchesProviderFields()) {
 					if(id!=-1) {
-						if(ProviderServices.updateProvider(id, textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText())) {
+						if(ProviderServices.updateProvider(id, textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText(),1)) {
 							JOptionPane.showMessageDialog(ProviderView.this, "Provider updated");
 						}else {
 							JOptionPane.showMessageDialog(ProviderView.this, "Error");
@@ -140,7 +142,13 @@ public class ProviderView extends JFrame {
 						goBack();
 							
 					}else {
-						int op = operationToDo(ProviderServices.selectProvider("name", textName.getText()),textName.getText());
+						
+						if(ProviderServices.selectProvider("name", textName.getText()).isEmpty())
+							provider = null;
+						else
+							provider=ProviderServices.selectProvider("name", textName.getText()).get(0);
+						
+						int op = operationToDo(provider);
 						if(op==-1) {
 							if(ProviderServices.insertProvider(new Provider(textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText()))) {
 								JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
@@ -148,7 +156,7 @@ public class ProviderView extends JFrame {
 								JOptionPane.showMessageDialog(ProviderView.this, "Error inserting provider");
 							}
 						}else if(op==0){
-							if(ProviderServices.activateOrDeactivateProvider(ProviderServices.selectProvider("name", textName.getText()).get(0).getId(), true))
+							if(ProviderServices.updateProvider(provider.getId(), textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText(), 1))
 								JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
 							else
 								JOptionPane.showMessageDialog(ProviderView.this, "Error inserting provider");
@@ -159,6 +167,7 @@ public class ProviderView extends JFrame {
 						textDescription.setText("");
 						textAddress.setText("");
 						textPhone.setText("");
+						
 					}
 				}
 			}
@@ -187,17 +196,16 @@ public class ProviderView extends JFrame {
 			return true;
 		}
 		
-		private int operationToDo(ArrayList<Provider> providers, String name){
+		private int operationToDo(Provider provider){
 			
-			for(Provider p : providers) {
-				if(p.getName().equalsIgnoreCase(name)) {
-					if(p.getActive()==1)
-						return 1;
-					else
-						return 0;
-				}
-			}
-			return -1;
+			if(provider!=null) {
+				if(provider.getActive()==1)
+					return 1;
+				else
+					return 0;
+			}else
+				return -1;
+			
 		}
 	}
 	
