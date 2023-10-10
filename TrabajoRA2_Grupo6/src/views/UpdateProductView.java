@@ -226,7 +226,6 @@ public class UpdateProductView extends JFrame {
 			}
 		}
 		
-		
 	}
 	public String bringFileChooserImage() {
 		
