@@ -149,4 +149,37 @@ public class ProductServices {
 		}
 		
 	}
+	
+	public static int selectProductStock(int id){
+		
+		String sql = "SELECT stock FROM Product WHERE id = "+id+";";
+		int productStock = 0;
+		try {
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			resultSet.next();
+			productStock = resultSet.getInt(1);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return productStock;
+	}
+	//Method to get all the products with stock
+	public static ArrayList<Product> getProductsWithStock(){
+		ArrayList<Product> products = new ArrayList<Product>();
+		String sql = "SELECT * FROM Product WHERE stock>0;";
+		try {
+			Statement statement = conn.createStatement();
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()) {
+				products.add(new Product(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getFloat(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8),resultSet.getInt(9)));
+			}	
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return products;
+	}
 }

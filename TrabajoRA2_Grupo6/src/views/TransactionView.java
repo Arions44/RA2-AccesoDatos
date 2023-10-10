@@ -141,6 +141,9 @@ public class TransactionView extends JFrame{
 	        } else if(btn==btnUpdate) {
 	        	new UpdateTransactionView();
 	        	dispose();
+	        }else if(btn==btnDownload) {
+	        	new DownloadReportView();
+	        	dispose();
 	        } else if (btn == comboBoxFilter) {
 	        	selectedFilter = comboBoxFilter.getSelectedItem().toString();
 	        } else if (btn == btnApply) {

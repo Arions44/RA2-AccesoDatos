@@ -11,6 +11,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
+import models.Product;
 import models.Provider;
 import models.Trading;
 
@@ -35,31 +38,26 @@ public class TradingService {
 	}
 	
 	public static boolean insertTrading(Trading t) {
-		String sql = "INSERT INTO Trading VALUES("+t.getId()+", "+t.getId_product()+", "+t.getId_provider()
-		+", "+t.getAmount()+", \'"+new SimpleDateFormat("yyyy-MM-dd").format(t.getDate())+"\', \'"+t.getType()+"\');";
-		try {
-			PreparedStatement statement = cnn.prepareStatement(sql);
-			statement.execute();
-//			statement.setInt(1, t.getId());
-//            statement.setInt(2, t.getId_product());
-//            statement.setInt(3, t.getId_provider());
-//            statement.setInt(4, t.getAmount());
-//            statement.setString(5, new SimpleDateFormat("yyyy-MM-dd").format(t.getDate()));
-//            statement.setString(6, t.getType()); //("sell" or "buy")
-//            statement.execute();
-            
-            //Here I update the stock after each transaction
-            if (t.getType().equals("buy")) {
-                updateProductStock(t.getId_product(), t.getAmount()); //Increment stock
-            } else if (t.getType().equals("sell")) {
-                updateProductStock(t.getId_product(), -t.getAmount()); //Decrement stock
-            }
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+		if(ProductServices.selectProductStock(t.getId_product())>=t.getAmount() || t.getType().equalsIgnoreCase("buy")) {
+			String sql = "INSERT INTO Trading VALUES("+t.getId()+", "+t.getId_product()+", "+t.getId_provider()
+			+", "+t.getAmount()+", \'"+new SimpleDateFormat("yyyy-MM-dd").format(t.getDate())+"\', \'"+t.getType()+"\');";
+			try {
+				PreparedStatement statement = cnn.prepareStatement(sql);
+				statement.execute();
+	            if (t.getType().equals("buy")) {
+	                updateProductStock(t.getId_product(), t.getAmount()); //Increment stock
+	            } else if (t.getType().equals("sell")) {
+	            	updateProductStock(t.getId_product(), -t.getAmount()); //Decrement stock
+	            }
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+	      }else
+	    	  JOptionPane.showMessageDialog(null, "Stock insufficient", "Warning!", JOptionPane.WARNING_MESSAGE);
+		return true;
 	}
+	
 	
 	public static ArrayList<Trading> selectTrading(String field, Object value){
 			
@@ -132,6 +130,8 @@ public class TradingService {
         }
         return productName;
     }
+	
+	
 
 	
 	
