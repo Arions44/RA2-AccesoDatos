@@ -110,7 +110,7 @@ public class ListProvidersView extends JFrame {
 	    contentPane.add(btnApply);
 	    
 	    btnReset = new JButton("Reset");
-	    btnReset.setEnabled(false);
+	    btnReset.setVisible(false);
 	    btnReset.setFont(new Font("Arial", Font.PLAIN, 14));
 	    btnReset.addActionListener(l);
 	    btnReset.setBounds(403, 19, 89, 22);
