@@ -185,9 +185,9 @@ public class ListProductsView extends JFrame {
 				HomeView hv=new HomeView();
 				hv.setVisible(true);
 			}else if(o.equals(buttonUpdate)) {
-				
-				
-				
+				dispose();
+				UpdateProductView upv=new UpdateProductView(mapId.get(row));
+				upv.setVisible(true);
 			}else if(o.equals(buttonDelete)) {
 				
 				int option = JOptionPane.showConfirmDialog(ListProductsView.this, "Are you sure you want to delete this product?", "Confirmation", JOptionPane.YES_NO_OPTION);

@@ -133,11 +133,11 @@ public class ProductServices {
 		}
 	}
 	
-	public static boolean updateProduct(Product p) {
+	public static boolean updateProduct(int id, String name, String description, float price, String category, String image, int idProvider) {
 		
-		String sql = "UPDATE Product SET name = \'"+p.getName()+"\', description = \'"+p.getDescription()
-			+"\', price = "+p.getPrice()+", category = \'"+p.getCategory()+"\', image = \'"+p.getImage()+"\', stock = "+p.getStock() 
-			+", id_provider = "+p.getId_provider()+" WHERE id = "+p.getId();
+		String sql = "UPDATE Product SET name = \'"+name+"\', description = \'"+description+"\', price = "+price+
+				", category = \'"+category+"\', image = \'"+image+"\', id_provider = "+idProvider
+				+" WHERE id = "+id;
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();

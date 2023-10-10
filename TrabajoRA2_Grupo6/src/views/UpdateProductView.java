@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,24 +32,24 @@ import models.Product;
 import services.ProductServices;
 import services.ProviderServices;
 
-public class CreateProductView extends JFrame {
+public class UpdateProductView extends JFrame {
 	static String[] cat= {"Suit","Blouse","Shoes","Jacket","Trainers","Jeans","Shirt"};
 	static String[] np;
 	private static final long serialVersionUID = 1L;
+	private int id;
 	private JPanel contentPane;
-	private JButton buttonBack,buttonCreate;
+	private JButton buttonBack,buttonUpdate;
 	private JTextField name,description,price;
 	private JComboBox category,providerNames;
 	private String pathImage;
 	private JLabel image;
 	private Path finalPath;
 	private static Map<Integer, String> providerIdName;
-	private ImageIcon defaultIcon = new ImageIcon("resources/images/default.jpg");
-	private Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
-	private ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
+	private String savedImage;
+	private ImageIcon Icon2;
 	
 	
-	public CreateProductView() {
+	public UpdateProductView(int i) {
 		setBounds(100, 100, 600, 440);
 		InterfaceModel.FrameModel(this, "Products");
 		contentPane = new JPanel();
@@ -61,17 +60,18 @@ public class CreateProductView extends JFrame {
 		Listener l=new Listener();
 		contentPane.setLayout(null);
 		
+		id=i;
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
 		buttonBack.setBounds(10, 346, 96, 21);
 		buttonBack.addActionListener(l);
 		contentPane.add(buttonBack);
 		
-		buttonCreate = new JButton("Create");
-		buttonCreate.setFont(new Font("Arial", Font.PLAIN, 14));
-		buttonCreate.setBounds(194, 290, 100, 40);
-		buttonCreate.addActionListener(l);
-		contentPane.add(buttonCreate);
+		buttonUpdate = new JButton("Update");
+		buttonUpdate.setFont(new Font("Arial", Font.PLAIN, 14));
+		buttonUpdate.setBounds(194, 290, 100, 40);
+		buttonUpdate.addActionListener(l);
+		contentPane.add(buttonUpdate);
 		
 		JLabel labelName = new JLabel("Name:");
 		labelName.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -133,7 +133,7 @@ public class CreateProductView extends JFrame {
 		providerNames.setBounds(160, 229, 125, 21);
 		contentPane.add(providerNames);
 		
-		image = new JLabel(defaultIcon2);
+		image = new JLabel();
 		image.setBounds(356, 112, 198, 121);
 		contentPane.add(image);
 		image.addMouseListener(new MouseAdapter() {
@@ -148,9 +148,27 @@ public class CreateProductView extends JFrame {
                 image.setToolTipText(filePath);
 			}
 		});
-
+		setProviderNames();
+		fileData();
 	}
 	
+	private void fileData() {
+		for (Product p : ProductServices.selectProduct("id", id)) {
+			name.setText(p.getName());
+			description.setText(p.getDescription());
+			price.setText(String.valueOf(p.getPrice()));
+			category.setSelectedItem(p.getCategory());
+			providerNames.setSelectedItem(providerIdName.get(p.getId_provider()));
+				ImageIcon Icon = new ImageIcon(p.getImage());
+				Image Img = Icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
+				Icon2 = new ImageIcon(Img);
+			image.setIcon(Icon2);
+			savedImage=p.getImage();
+			pathImage=p.getImage();
+		}
+		
+	}
+
 	private void setProviderNames() {
 		providerIdName = ProviderServices.selectProviderName(null, 0);
 		
@@ -173,38 +191,37 @@ public class CreateProductView extends JFrame {
 				dispose();
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
-			}else if(o.equals(buttonCreate)) {
+			}else if(o.equals(buttonUpdate)) {
 				if(name.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
+					JOptionPane.showMessageDialog(UpdateProductView.this, "The name cannot be empty");
 				}else if(description.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
+					JOptionPane.showMessageDialog(UpdateProductView.this, "The description cannot be empty");
 				}else if(price.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
+					JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be empty");
 				}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
+					JOptionPane.showMessageDialog(UpdateProductView.this, "Price only permit numbers");
 				}else if(Float.valueOf(price.getText())<=0){
-					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
+					JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be 0 or less");
 				}else {
-					if(!(pathImage==null)) {
-						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
-								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
-							if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+					int option = JOptionPane.showConfirmDialog(UpdateProductView.this, "Are you sure you want to update this product?", "Confirmation", JOptionPane.YES_NO_OPTION);
+					if(option==JOptionPane.YES_OPTION) {
+						if(ProductServices.updateProduct(id,name.getText(),description.getText(),Float.parseFloat(price.getText()),
+								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()))) {
+							if(!pathImage.equals(savedImage)) {
 					    		try {
 									Files.copy(Paths.get(image.getToolTipText()), finalPath);
+									File f=new File(String.valueOf(savedImage));
+									f.delete();
 								} catch (IOException e1) {
 									e1.printStackTrace();
 								}
 					    	}
-							JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
-							name.setText("");
-							description.setText("");
-							price.setText("");
+							JOptionPane.showMessageDialog(UpdateProductView.this, "Product updated successfuly");
+							dispose();
+							ListProductsView lpv=new ListProductsView();
+							lpv.setVisible(true);
 							
-							image.setIcon(defaultIcon2);
 						}
-					}
-					else {
-						JOptionPane.showMessageDialog(CreateProductView.this, "You have not selected any images");
 					}
 				}
 			}
@@ -231,20 +248,20 @@ public class CreateProductView extends JFrame {
 		    	File f=new File(pathImage);
 		    	if(f.exists()) {
 		    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
-					path="resources/images/default.jpg";
+					path=savedImage;
 					return path;
 		    	}
 		    	else {
 			    	finalPath=Path.of(pathImage).toAbsolutePath();
 		    	}
+		    	
 		    }
 	    }catch(Exception e) {
-	    	JOptionPane.showMessageDialog(CreateProductView.this, "Error selecting the image!");
+	    	JOptionPane.showMessageDialog(UpdateProductView.this, "Error selecting the image!");
 	    }
-	    	
 	    
 	    if(path.length()==0)
-	    	path="resources/images/default.jpg";
+	    	path=savedImage;
 	    	
 	    return path;
 	}
