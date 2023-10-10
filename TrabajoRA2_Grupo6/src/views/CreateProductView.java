@@ -174,16 +174,8 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				if(name.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
-				}else if(description.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
-				}else if(price.getText().length()==0) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
-				}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
-					JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
-				}else if(Float.valueOf(price.getText())<=0){
-					JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
+				if(check()==true) {
+					
 				}else {
 					if(!(pathImage==null)) {
 						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
@@ -209,9 +201,28 @@ public class CreateProductView extends JFrame {
 				}
 			}
 		}
-		
-		
+
+		private boolean check() {
+			if(name.getText().length()==0) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
+				return true;
+			}else if(description.getText().length()==0) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
+				return true;
+			}else if(price.getText().length()==0) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
+				return true;
+			}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
+				return true;
+			}else if(Float.valueOf(price.getText())<=0){
+				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
+				return true;
+			}
+			return false;
+		}
 	}
+		
 	public String bringFileChooserImage() {
 		
 		JFileChooser fc=new JFileChooser();

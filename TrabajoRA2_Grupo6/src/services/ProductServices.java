@@ -133,10 +133,10 @@ public class ProductServices {
 		}
 	}
 	
-	public static boolean updateProduct(int id, String name, String description, float price, String category, String image, int idProvider) {
+	public static boolean updateProduct(int id, String name, String description, float price, String category, String image, int idProvider, int available) {
 		
 		String sql = "UPDATE Product SET name = \'"+name+"\', description = \'"+description+"\', price = "+price+
-				", category = \'"+category+"\', image = \'"+image+"\', id_provider = "+idProvider
+				", category = \'"+category+"\', image = \'"+image+"\', id_provider = "+idProvider+", available = "+available
 				+" WHERE id = "+id;
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
@@ -149,5 +149,4 @@ public class ProductServices {
 		}
 		
 	}
-	
 }

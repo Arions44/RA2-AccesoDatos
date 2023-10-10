@@ -206,7 +206,7 @@ public class UpdateProductView extends JFrame {
 					int option = JOptionPane.showConfirmDialog(UpdateProductView.this, "Are you sure you want to update this product?", "Confirmation", JOptionPane.YES_NO_OPTION);
 					if(option==JOptionPane.YES_OPTION) {
 						if(ProductServices.updateProduct(id,name.getText(),description.getText(),Float.parseFloat(price.getText()),
-								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()))) {
+								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()),1)) {
 							if(!pathImage.equals(savedImage)) {
 					    		try {
 									Files.copy(Paths.get(image.getToolTipText()), finalPath);
