@@ -220,7 +220,6 @@ public class UpdateProductView extends JFrame {
 							dispose();
 							ListProductsView lpv=new ListProductsView();
 							lpv.setVisible(true);
-							
 						}
 					}
 				}
