@@ -2,6 +2,7 @@ package views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -139,15 +140,25 @@ public class ProviderView extends JFrame {
 						goBack();
 							
 					}else {
-						if(ProviderServices.insertProvider(new Provider(textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText()))) {
-							JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
-							textName.setText("");
-							textDescription.setText("");
-							textAddress.setText("");
-							textPhone.setText("");
+						int op = operationToDo(ProviderServices.selectProvider("name", textName.getText()),textName.getText());
+						if(op==-1) {
+							if(ProviderServices.insertProvider(new Provider(textName.getText(), textDescription.getText(), textAddress.getText(), textPhone.getText()))) {
+								JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
+							}else {
+								JOptionPane.showMessageDialog(ProviderView.this, "Error inserting provider");
+							}
+						}else if(op==0){
+							if(ProviderServices.activateOrDeactivateProvider(ProviderServices.selectProvider("name", textName.getText()).get(0).getId(), true))
+								JOptionPane.showMessageDialog(ProviderView.this, "Provider inserted");
+							else
+								JOptionPane.showMessageDialog(ProviderView.this, "Error inserting provider");
 						}else {
-							JOptionPane.showMessageDialog(ProviderView.this, "Error");
+							JOptionPane.showMessageDialog(ProviderView.this, "That provider already exists");
 						}
+						textName.setText("");
+						textDescription.setText("");
+						textAddress.setText("");
+						textPhone.setText("");
 					}
 				}
 			}
@@ -174,6 +185,19 @@ public class ProviderView extends JFrame {
 				return false;
 			}
 			return true;
+		}
+		
+		private int operationToDo(ArrayList<Provider> providers, String name){
+			
+			for(Provider p : providers) {
+				if(p.getName().equalsIgnoreCase(name)) {
+					if(p.getActive()==1)
+						return 1;
+					else
+						return 0;
+				}
+			}
+			return -1;
 		}
 	}
 	

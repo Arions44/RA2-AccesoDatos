@@ -93,9 +93,15 @@ public class ProviderServices {
 		
 	}
 	
-	public static boolean deleteProvider(int id) { //Delete provider by id
+	public static boolean activateOrDeactivateProvider(int id, boolean option) { //Delete provider by id
 		
-		String sql = "UPDATE Provider SET active = 0 WHERE( id = "+id+");";
+		String sql ="";
+		if(option) {
+			sql = "UPDATE Provider SET active = 1 WHERE( id = "+id+");";
+			System.out.println("a");
+		}
+		else
+			sql = "UPDATE Provider SET active = 0 WHERE( id = "+id+");";
 		try {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.execute();
