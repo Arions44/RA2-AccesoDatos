@@ -158,7 +158,7 @@ public class ListProductsView extends JFrame {
         
         DefaultTableModel modelo = new DefaultTableModel(colum, 0);
         mapId=new HashMap<Integer,Integer>(); 
-        providerIdName = ProviderServices.selectProviderName(null, 0);
+        providerIdName = ProviderServices.selectProviderName(null, 0,false);
         int count=0;
         for (Product p : ProductServices.selectProduct(field, value)) {
         	if(p.getAvailable()==1) {
@@ -168,7 +168,6 @@ public class ListProductsView extends JFrame {
 	            count++;
         	}
         }
-        
         return modelo;
 	}
 
@@ -178,7 +177,6 @@ public class ListProductsView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
-			
 			
 			if(o.equals(buttonBack)) {
 				dispose();
@@ -194,8 +192,6 @@ public class ListProductsView extends JFrame {
 				
 				if(option==JOptionPane.YES_OPTION) {
 					if(ProductServices.deleteProduct(mapId.get(row))) {
-						File f=new File(imageRoute);
-						f.delete();
 						image.setIcon(null);
 						if(active) {
 							if(typeFilter.getSelectedItem().equals("Provider name")) {

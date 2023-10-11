@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import models.Product;
+import models.Provider;
 import services.ProductServices;
 import services.ProviderServices;
 
@@ -41,13 +42,15 @@ public class CreateProductView extends JFrame {
 	private JButton buttonBack,buttonCreate;
 	private JTextField name,description,price;
 	private JComboBox category,providerNames;
-	private String pathImage;
+	private String pathImage=null;
 	private JLabel image;
 	private Path finalPath;
 	private static Map<Integer, String> providerIdName;
 	private ImageIcon defaultIcon = new ImageIcon("resources/images/default.jpg");
 	private Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
 	private ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
+	private Product product;
+	private String oldImagePath;
 	
 	
 	public CreateProductView() {
@@ -140,19 +143,32 @@ public class CreateProductView extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				
+				if(ProductServices.selectProduct("name", name.getText()).isEmpty()) {
+					product = null;
+					oldImagePath="";
+				}
+				else {
+					product=ProductServices.selectProduct("name", name.getText()).get(0);
+					oldImagePath=product.getImage();
+				}
+				
 				String filePath=bringFileChooserImage();
 				ImageIcon icon = new ImageIcon(filePath);
                 Image i = icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
                 ImageIcon img2 = new ImageIcon(i);
                 image.setIcon(img2);
                 image.setToolTipText(filePath);
+                
+               
+                
 			}
 		});
 
 	}
 	
 	private void setProviderNames() {
-		providerIdName = ProviderServices.selectProviderName(null, 0);
+		providerIdName = ProviderServices.selectProviderName(null, 0, true);
 		
 		List<String> list=new ArrayList<>();
 		for (Entry<Integer, String> entry : providerIdName.entrySet()) {
@@ -174,26 +190,62 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				if(check()==true) {
-					
-				}else {
+				if(check()) {
 					if(!(pathImage==null)) {
-						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
-								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
-							if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-					    		try {
-									Files.copy(Paths.get(image.getToolTipText()), finalPath);
-								} catch (IOException e1) {
-									e1.printStackTrace();
-								}
+						
+						int op = action(product);
+						if(op==-1) {
+							if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
+									(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
+								if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+						    		try {
+										Files.copy(Paths.get(image.getToolTipText()), finalPath);
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
+						    		JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
+						    	}
+
+								name.setText("");
+								description.setText("");
+								price.setText("");
+								
+								image.setIcon(defaultIcon2);
+								pathImage=null;
+							}else {
+					    		JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
 					    	}
-							JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
-							name.setText("");
-							description.setText("");
-							price.setText("");
 							
-							image.setIcon(defaultIcon2);
+						}else if(op==0) {
+							
+								if(ProductServices.updateProduct(product.getId(),name.getText(),description.getText(),Float.parseFloat(price.getText()),
+										(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()),1)) {
+									if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+							    		try {
+							    			if(!oldImagePath.equals(pathImage)) {
+											Files.copy(Paths.get(image.getToolTipText()), finalPath);
+											File f=new File(String.valueOf(product.getImage()));
+											f.delete();
+							    			}
+										} catch (IOException e1) {
+											e1.printStackTrace();
+										}
+							    		JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
+							    	}
+									name.setText("");
+									description.setText("");
+									price.setText("");
+									
+									image.setIcon(defaultIcon2);
+									pathImage=null;
+								}else {
+									JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
+								}
+							
+						}else {
+							JOptionPane.showMessageDialog(CreateProductView.this, "That product already exists");
 						}
+						
 					}
 					else {
 						JOptionPane.showMessageDialog(CreateProductView.this, "You have not selected any images");
@@ -201,25 +253,36 @@ public class CreateProductView extends JFrame {
 				}
 			}
 		}
+		
+		private int action(Product product){
+			if(product!=null) {
+				if(product.getAvailable()==1)
+					return 1;
+				else
+					return 0;
+			}else
+				return -1;
+			
+		}
 
 		private boolean check() {
-			if(name.getText().length()==0) {
-				JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
-				return true;
-			}else if(description.getText().length()==0) {
-				JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
-				return true;
+			if(!name.getText().matches("^.{1,30}$")) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The name has to be between 1 and 30 long");
+				return false;
+			}else if(!description.getText().matches("^.{1,50}$")) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The description has to be between 1 and 50 long");
+				return false;
 			}else if(price.getText().length()==0) {
 				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
-				return true;
+				return false;
 			}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
 				JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
-				return true;
+				return false;
 			}else if(Float.valueOf(price.getText())<=0){
 				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
-				return true;
+				return false;
 			}
-			return false;
+			return true;
 		}
 	}
 		
@@ -240,7 +303,7 @@ public class CreateProductView extends JFrame {
 		    }else {
 		    	pathImage = "resources/images/"+file.getName();
 		    	File f=new File(pathImage);
-		    	if(f.exists()) {
+		    	if(f.exists() && !oldImagePath.equals(pathImage)) {
 		    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
 					path="resources/images/default.jpg";
 					return path;
@@ -250,6 +313,7 @@ public class CreateProductView extends JFrame {
 		    	}
 		    }
 	    }catch(Exception e) {
+	    	//e.printStackTrace();
 	    	JOptionPane.showMessageDialog(CreateProductView.this, "Error selecting the image!");
 	    }
 	    	
