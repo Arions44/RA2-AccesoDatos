@@ -41,6 +41,7 @@ public class DownloadReportView extends JFrame{
 	private JButton btnDownload;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JDateChooser dateChooser;
+	
 
 
 	public DownloadReportView() {
