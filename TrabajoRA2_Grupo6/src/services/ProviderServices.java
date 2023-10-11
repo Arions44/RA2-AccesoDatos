@@ -55,7 +55,7 @@ public class ProviderServices {
 		return providers;
 	}
 	
-	public static Map<Integer, String> selectProviderName(String field, int id){ //Return provider by a given field and value when filtered or return every provider when parameters are null
+	public static Map<Integer, String> selectProviderName(String field, int id, boolean actives){ //Return provider by a given field and value when filtered or return every provider when parameters are null
 		
 		Map<Integer, String> providerIdName = new HashMap<Integer,String>();
 		String sql = "SELECT id, name, active FROM Provider";
@@ -69,7 +69,11 @@ public class ProviderServices {
 			resultSet = statement.executeQuery(sql);
 			
 			while(resultSet.next()) {
-				if(resultSet.getInt(3)==1)
+				if(actives) {
+					if(resultSet.getInt(3)==1)
+						providerIdName.put(resultSet.getInt(1), resultSet.getString(2));
+				}
+				else
 					providerIdName.put(resultSet.getInt(1), resultSet.getString(2));
 			}
 			
