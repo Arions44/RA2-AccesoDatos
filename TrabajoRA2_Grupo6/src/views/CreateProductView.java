@@ -50,6 +50,7 @@ public class CreateProductView extends JFrame {
 	private Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
 	private ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
 	private Product product;
+	private String oldImagePath;
 	
 	
 	public CreateProductView() {
@@ -142,19 +143,32 @@ public class CreateProductView extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				
+				if(ProductServices.selectProduct("name", name.getText()).isEmpty()) {
+					product = null;
+					oldImagePath="";
+				}
+				else {
+					product=ProductServices.selectProduct("name", name.getText()).get(0);
+					oldImagePath=product.getImage();
+				}
+				
 				String filePath=bringFileChooserImage();
 				ImageIcon icon = new ImageIcon(filePath);
                 Image i = icon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
                 ImageIcon img2 = new ImageIcon(i);
                 image.setIcon(img2);
                 image.setToolTipText(filePath);
+                
+               
+                
 			}
 		});
 
 	}
 	
 	private void setProviderNames() {
-		providerIdName = ProviderServices.selectProviderName(null, 0);
+		providerIdName = ProviderServices.selectProviderName(null, 0, true);
 		
 		List<String> list=new ArrayList<>();
 		for (Entry<Integer, String> entry : providerIdName.entrySet()) {
@@ -178,11 +192,6 @@ public class CreateProductView extends JFrame {
 			}else if(o.equals(buttonCreate)) {
 				if(check()) {
 					if(!(pathImage==null)) {
-						
-						if(ProductServices.selectProduct("name", name.getText()).isEmpty())
-							product = null;
-						else
-							product=ProductServices.selectProduct("name", name.getText()).get(0);
 						
 						int op = action(product);
 						if(op==-1) {
@@ -208,24 +217,29 @@ public class CreateProductView extends JFrame {
 							
 						}else if(op==0) {
 							
-							int option = JOptionPane.showConfirmDialog(CreateProductView.this, "This product is deactivated! Are you sure you want to activate it again?", "Confirmation", JOptionPane.YES_NO_OPTION);
-							if(option==JOptionPane.YES_OPTION) {
 								if(ProductServices.updateProduct(product.getId(),name.getText(),description.getText(),Float.parseFloat(price.getText()),
 										(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()),1)) {
 									if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
 							    		try {
+							    			if(!oldImagePath.equals(pathImage)) {
 											Files.copy(Paths.get(image.getToolTipText()), finalPath);
 											File f=new File(String.valueOf(product.getImage()));
 											f.delete();
+							    			}
 										} catch (IOException e1) {
 											e1.printStackTrace();
 										}
+							    		JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
 							    	}
+									name.setText("");
+									description.setText("");
+									price.setText("");
+									
+									image.setIcon(defaultIcon2);
 									
 								}else {
-									JOptionPane.showMessageDialog(CreateProductView.this, "Error updating product");
+									JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
 								}
-							}
 							
 						}else {
 							JOptionPane.showMessageDialog(CreateProductView.this, "That product already exists");
@@ -288,7 +302,7 @@ public class CreateProductView extends JFrame {
 		    }else {
 		    	pathImage = "resources/images/"+file.getName();
 		    	File f=new File(pathImage);
-		    	if(f.exists()) {
+		    	if(f.exists() && !oldImagePath.equals(pathImage)) {
 		    		JOptionPane.showMessageDialog(null, "That name is used. Change the file name.");
 					path="resources/images/default.jpg";
 					return path;
@@ -298,6 +312,7 @@ public class CreateProductView extends JFrame {
 		    	}
 		    }
 	    }catch(Exception e) {
+	    	e.printStackTrace();
 	    	JOptionPane.showMessageDialog(CreateProductView.this, "Error selecting the image!");
 	    }
 	    	

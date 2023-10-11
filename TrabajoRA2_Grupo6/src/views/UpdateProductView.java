@@ -61,6 +61,7 @@ public class UpdateProductView extends JFrame {
 		contentPane.setLayout(null);
 		
 		id=i;
+
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
 		buttonBack.setBounds(10, 346, 96, 21);
@@ -148,7 +149,6 @@ public class UpdateProductView extends JFrame {
                 image.setToolTipText(filePath);
 			}
 		});
-		setProviderNames();
 		fileData();
 	}
 	
@@ -170,13 +170,22 @@ public class UpdateProductView extends JFrame {
 	}
 
 	private void setProviderNames() {
-		providerIdName = ProviderServices.selectProviderName(null, 0);
+		
+		ArrayList<Product> p=ProductServices.selectProduct("id", id);
+		
+		Map<Integer, String> old=ProviderServices.selectProviderName("id", p.get(0).getId_provider(), false);
+		
+		providerIdName = ProviderServices.selectProviderName(null, 0,true );
+		if(!old.isEmpty()) {
+			providerIdName.put(p.get(0).getId_provider(), old.get(p.get(0).getId_provider()));
+		}
 		
 		List<String> list=new ArrayList<>();
 		for (Entry<Integer, String> entry : providerIdName.entrySet()) {
 			list.add(entry.getValue());
         }
 		np=new String[list.size()];
+		
 		np=list.toArray(np);
 	}
 
