@@ -128,6 +128,23 @@ public class ProviderServices {
 		
 	}
 	
+	public static ArrayList<Integer> getProviderIds() {
+	    ArrayList<Integer> providerIds = new ArrayList<Integer>();
+	    String sql = "SELECT id FROM Provider";
+	    
+	    try {
+	        Statement statement = conn.createStatement();
+	        resultSet = statement.executeQuery(sql);
+	        while (resultSet.next()) {
+	            providerIds.add(resultSet.getInt(1));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return providerIds;
+	}
+	
 	
 	
 }

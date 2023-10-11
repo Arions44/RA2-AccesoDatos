@@ -182,4 +182,29 @@ public class ProductServices {
 		}
 		return products;
 	}
+	
+	public static ArrayList<Integer> getProductIdsByType(String type) {
+	    ArrayList<Integer> productIds = new ArrayList<Integer>();
+	    String sql = "SELECT id FROM Product";
+	    
+	    if (type.equalsIgnoreCase("buy")) {
+	        sql += ";";
+	    } else if (type.equalsIgnoreCase("sell")) {
+	        sql += " WHERE stock > 0;";
+	    } else {
+	        return productIds;
+	    }
+	    
+	    try {
+	        Statement statement = conn.createStatement();
+	        resultSet = statement.executeQuery(sql);
+	        while (resultSet.next()) {
+	            productIds.add(resultSet.getInt(1));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return productIds;
+	}
 }
