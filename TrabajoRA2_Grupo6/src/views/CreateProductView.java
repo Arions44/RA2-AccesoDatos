@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import models.Product;
+import models.Provider;
 import services.ProductServices;
 import services.ProviderServices;
 
@@ -48,6 +49,7 @@ public class CreateProductView extends JFrame {
 	private ImageIcon defaultIcon = new ImageIcon("resources/images/default.jpg");
 	private Image defaultImage = defaultIcon.getImage().getScaledInstance(168, 88, Image.SCALE_SMOOTH);
 	private ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
+	private Product product;
 	
 	
 	public CreateProductView() {
@@ -174,24 +176,61 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				if(!check()) {
+				if(check()) {
 					if(!(pathImage==null)) {
-						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
-								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
-							if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-					    		try {
-									Files.copy(Paths.get(image.getToolTipText()), finalPath);
-								} catch (IOException e1) {
-									e1.printStackTrace();
-								}
+						
+						if(ProductServices.selectProduct("name", name.getText()).isEmpty())
+							product = null;
+						else
+							product=ProductServices.selectProduct("name", name.getText()).get(0);
+						
+						int op = action(product);
+						if(op==-1) {
+							if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
+									(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
+								if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+						    		try {
+										Files.copy(Paths.get(image.getToolTipText()), finalPath);
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
+						    		JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
+						    	}
+
+								name.setText("");
+								description.setText("");
+								price.setText("");
+								
+								image.setIcon(defaultIcon2);
+							}else {
+					    		JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
 					    	}
-							JOptionPane.showMessageDialog(CreateProductView.this, "Product created successfuly");
-							name.setText("");
-							description.setText("");
-							price.setText("");
 							
-							image.setIcon(defaultIcon2);
+						}else if(op==0) {
+							
+							int option = JOptionPane.showConfirmDialog(CreateProductView.this, "This product is deactivated! Are you sure you want to activate it again?", "Confirmation", JOptionPane.YES_NO_OPTION);
+							if(option==JOptionPane.YES_OPTION) {
+								if(ProductServices.updateProduct(product.getId(),name.getText(),description.getText(),Float.parseFloat(price.getText()),
+										(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()),1)) {
+									if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+							    		try {
+											Files.copy(Paths.get(image.getToolTipText()), finalPath);
+											File f=new File(String.valueOf(product.getImage()));
+											f.delete();
+										} catch (IOException e1) {
+											e1.printStackTrace();
+										}
+							    	}
+									
+								}else {
+									JOptionPane.showMessageDialog(CreateProductView.this, "Error updating product");
+								}
+							}
+							
+						}else {
+							JOptionPane.showMessageDialog(CreateProductView.this, "That product already exists");
 						}
+						
 					}
 					else {
 						JOptionPane.showMessageDialog(CreateProductView.this, "You have not selected any images");
@@ -199,25 +238,36 @@ public class CreateProductView extends JFrame {
 				}
 			}
 		}
+		
+		private int action(Product product){
+			if(product!=null) {
+				if(product.getAvailable()==1)
+					return 1;
+				else
+					return 0;
+			}else
+				return -1;
+			
+		}
 
 		private boolean check() {
-			if(name.getText().length()==0) {
-				JOptionPane.showMessageDialog(CreateProductView.this, "The name cannot be empty");
-				return true;
-			}else if(description.getText().length()==0) {
-				JOptionPane.showMessageDialog(CreateProductView.this, "The description cannot be empty");
-				return true;
+			if(!name.getText().matches("^.{1,30}$")) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The name has to be between 1 and 30 long");
+				return false;
+			}else if(!description.getText().matches("^.{1,50}$")) {
+				JOptionPane.showMessageDialog(CreateProductView.this, "The description has to be between 1 and 50 long");
+				return false;
 			}else if(price.getText().length()==0) {
 				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be empty");
-				return true;
+				return false;
 			}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
 				JOptionPane.showMessageDialog(CreateProductView.this, "Price only permit numbers");
-				return true;
+				return false;
 			}else if(Float.valueOf(price.getText())<=0){
 				JOptionPane.showMessageDialog(CreateProductView.this, "The price cannot be 0 or less");
-				return true;
+				return false;
 			}
-			return false;
+			return true;
 		}
 	}
 		
