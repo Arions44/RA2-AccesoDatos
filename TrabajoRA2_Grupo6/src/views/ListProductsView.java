@@ -194,8 +194,6 @@ public class ListProductsView extends JFrame {
 				
 				if(option==JOptionPane.YES_OPTION) {
 					if(ProductServices.deleteProduct(mapId.get(row))) {
-						File f=new File(imageRoute);
-						f.delete();
 						image.setIcon(null);
 						if(active) {
 							if(typeFilter.getSelectedItem().equals("Provider name")) {

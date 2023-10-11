@@ -41,7 +41,7 @@ public class CreateProductView extends JFrame {
 	private JButton buttonBack,buttonCreate;
 	private JTextField name,description,price;
 	private JComboBox category,providerNames;
-	private String pathImage;
+	private String pathImage=null;
 	private JLabel image;
 	private Path finalPath;
 	private static Map<Integer, String> providerIdName;
@@ -174,9 +174,7 @@ public class CreateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonCreate)) {
-				if(check()==true) {
-					
-				}else {
+				if(!check()) {
 					if(!(pathImage==null)) {
 						if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
 								(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
