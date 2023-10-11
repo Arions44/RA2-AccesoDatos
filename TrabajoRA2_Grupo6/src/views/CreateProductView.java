@@ -211,6 +211,7 @@ public class CreateProductView extends JFrame {
 								price.setText("");
 								
 								image.setIcon(defaultIcon2);
+								pathImage=null;
 							}else {
 					    		JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
 					    	}
@@ -236,7 +237,7 @@ public class CreateProductView extends JFrame {
 									price.setText("");
 									
 									image.setIcon(defaultIcon2);
-									
+									pathImage=null;
 								}else {
 									JOptionPane.showMessageDialog(CreateProductView.this, "Error inserting product");
 								}
@@ -312,7 +313,7 @@ public class CreateProductView extends JFrame {
 		    	}
 		    }
 	    }catch(Exception e) {
-	    	e.printStackTrace();
+	    	//e.printStackTrace();
 	    	JOptionPane.showMessageDialog(CreateProductView.this, "Error selecting the image!");
 	    }
 	    	
