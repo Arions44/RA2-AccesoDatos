@@ -144,28 +144,19 @@ public class AddTransactionView extends JFrame{
 		        String selectedType = (String) typeCB.getSelectedItem();
 		        String amountText = amountTF.getText();
 
-		        if (selectedProductName != null && selectedProviderName != null && selectedType != null && !amountText.isEmpty()) {
-		            int productId = productNamesMap.entrySet()
-		                .stream()
-		                .filter(entry -> entry.getValue().equals(selectedProductName))
-		                .map(Map.Entry::getKey)
-		                .findFirst()
-		                .orElse(-1);
+		        int productId = TradingService.getProductIdByName(selectedProductName);
+		        int providerId = TradingService.getProviderIdByName(selectedProviderName);    
+		        
 
-		            int providerId = providerNamesMap.entrySet()
-		                .stream()
-		                .filter(entry -> entry.getValue().equals(selectedProviderName))
-		                .map(Map.Entry::getKey)
-		                .findFirst()
-		                .orElse(-1);
+		        if (selectedProductName != null && selectedProviderName != null && selectedType != null && !amountText.isEmpty()) {
 
 		            int amount = Integer.parseInt(amountText);
 
 		            if (productId != -1 && providerId != -1) {
 		                Trading trading = new Trading(productId, providerId, amount, selectedType);
-
 		                if (TradingService.insertTrading(trading)) {
 		                    JOptionPane.showMessageDialog(null, "Trading added successfully.");
+		                    System.out.println(trading);
 		                } else {
 		                    JOptionPane.showMessageDialog(null, "Error inserting the trading.", "Error", JOptionPane.ERROR_MESSAGE);
 		                }

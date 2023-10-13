@@ -44,9 +44,9 @@ public class TradingService {
 			try {
 				PreparedStatement statement = cnn.prepareStatement(sql);
 				statement.execute();
-	            if (t.getType().equals("buy")) {
+	            if (t.getType().equalsIgnoreCase("buy")) {
 	                updateProductStock(t.getId_product(), t.getAmount()); //Increment stock
-	            } else if (t.getType().equals("sell")) {
+	            } else if (t.getType().equalsIgnoreCase("sell")) {
 	            	updateProductStock(t.getId_product(), -t.getAmount()); //Decrement stock
 	            }
 			} catch (SQLException e) {
@@ -98,7 +98,7 @@ public class TradingService {
         }
     }
 	
-	//Methodos to get the product and provider name using their Ids
+	//Methods to get the product and provider name using their Ids
 	public static String getProviderById(int providerId) {
         String providerName = null;
         String sql = "SELECT name FROM Provider WHERE id = ?";
@@ -132,6 +132,39 @@ public class TradingService {
     }
 	
 	
+	//Methods to get the product and provider id using their names
+	
+	public static int getProductIdByName(String productName) {
+	    int productId = -1;
+	    String sql = "SELECT id FROM Product WHERE name = ?";
+	    try {
+	        PreparedStatement statement = cnn.prepareStatement(sql);
+	        statement.setString(1, productName);
+	        ResultSet resultSet = statement.executeQuery();
+	        if (resultSet.next()) {
+	            productId = resultSet.getInt("id");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return productId;
+	}
+	
+	public static int getProviderIdByName(String providerName) {
+	    int providerId = -1;
+	    String sql = "SELECT id FROM Provider WHERE name = ?";
+	    try {
+	        PreparedStatement statement = cnn.prepareStatement(sql);
+	        statement.setString(1, providerName);
+	        ResultSet resultSet = statement.executeQuery();
+	        if (resultSet.next()) {
+	            providerId = resultSet.getInt("id");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return providerId;
+	}
 
 	
 	
