@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,9 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import models.Product;
-import models.Provider;
 import services.ProductServices;
 import services.ProviderServices;
 
@@ -51,7 +48,6 @@ public class CreateProductView extends JFrame {
 	private ImageIcon defaultIcon2 = new ImageIcon(defaultImage);
 	private Product product;
 	private String oldImagePath;
-	
 	
 	public CreateProductView() {
 		setBounds(100, 100, 600, 440);
@@ -144,6 +140,8 @@ public class CreateProductView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
+				//This part is used to check if an image already exists associated with a product. 
+				//If the product already exists and an image with the same name is selected, it allows the use of it.
 				if(ProductServices.selectProduct("name", name.getText()).isEmpty()) {
 					product = null;
 					oldImagePath="";
@@ -160,13 +158,12 @@ public class CreateProductView extends JFrame {
                 image.setIcon(img2);
                 image.setToolTipText(filePath);
                 
-               
-                
 			}
 		});
 
 	}
 	
+	//This method collects the names of all the suppliers to display them in the JComboBox.
 	private void setProviderNames() {
 		providerIdName = ProviderServices.selectProviderName(null, 0, true);
 		
@@ -184,7 +181,6 @@ public class CreateProductView extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Object o=e.getSource();
 			
-			
 			if(o.equals(buttonBack)) {
 				dispose();
 				ListProductsView lpv=new ListProductsView();
@@ -198,6 +194,7 @@ public class CreateProductView extends JFrame {
 							if(ProductServices.insertProduct(new Product(name.getText(),description.getText(),Float.parseFloat(price.getText()),
 									(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem())))) {
 								if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
+									//This if causes the product to not save the image until it is added to the database.
 						    		try {
 										Files.copy(Paths.get(image.getToolTipText()), finalPath);
 									} catch (IOException e1) {
@@ -221,7 +218,9 @@ public class CreateProductView extends JFrame {
 								if(ProductServices.updateProduct(product.getId(),name.getText(),description.getText(),Float.parseFloat(price.getText()),
 										(String)category.getSelectedItem(),pathImage,getKeyFromValue((String)providerNames.getSelectedItem()),1)) {
 									if(!image.getToolTipText().matches("(.*)TrabajoRA2_Grupo6//resources//images//(.*)")) {
-							    		try {
+										//This if causes the product to not save the image until it is added to the database.
+										//In this, unlike the insert, it updates the image, eliminating the old one if another is used.
+										try {
 							    			if(!oldImagePath.equals(pathImage)) {
 											Files.copy(Paths.get(image.getToolTipText()), finalPath);
 											File f=new File(String.valueOf(product.getImage()));
@@ -254,6 +253,10 @@ public class CreateProductView extends JFrame {
 			}
 		}
 		
+		//This method is used to notify if the product to be added is new, 
+		//has already been created (to activate it), or if it already exists.
+		//This method is called in the create button, if it returns -1 it inserts the product, if it 
+		//returns 0 it updates the previously existing product, and if it returns 1 it warns that the product already exists.
 		private int action(Product product){
 			if(product!=null) {
 				if(product.getAvailable()==1)
@@ -264,7 +267,8 @@ public class CreateProductView extends JFrame {
 				return -1;
 			
 		}
-
+		
+		//Method to verify that the data entered in the JTextField and the image meet minimum requirements.
 		private boolean check() {
 			if(!name.getText().matches("^.{1,30}$")) {
 				JOptionPane.showMessageDialog(CreateProductView.this, "The name has to be between 1 and 30 long");
@@ -285,7 +289,8 @@ public class CreateProductView extends JFrame {
 			return true;
 		}
 	}
-		
+	
+	//Method to add image
 	public String bringFileChooserImage() {
 		
 		JFileChooser fc=new JFileChooser();
@@ -324,7 +329,8 @@ public class CreateProductView extends JFrame {
 	    return path;
 	}
 	
-	 private static int getKeyFromValue(String value) {
+	//Method to recover the id of each supplier to be able to add to the database.
+	private static int getKeyFromValue(String value) {
 	        for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
 	            if (entry.getValue().equals(value)) {
 	                return entry.getKey();
