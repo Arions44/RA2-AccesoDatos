@@ -55,7 +55,7 @@ public class ProviderServices {
 		return providers;
 	}
 	
-	public static Map<Integer, String> selectProviderName(String field, int id, boolean actives){ //Return provider by a given field and value when filtered or return every provider when parameters are null
+	public static Map<Integer, String> selectProviderName(String field, int id, boolean actives){ //Return provider name and id as a map with the boolean we filter only active provider or every provider
 		
 		Map<Integer, String> providerIdName = new HashMap<Integer,String>();
 		String sql = "SELECT id, name, active FROM Provider";
@@ -128,7 +128,7 @@ public class ProviderServices {
 		
 	}
 	
-	public static ArrayList<Integer> getProviderIds() {
+	public static ArrayList<Integer> getProviderIds() { //get id from provider for product and transactions
 	    ArrayList<Integer> providerIds = new ArrayList<Integer>();
 	    String sql = "SELECT id FROM Provider";
 	    
