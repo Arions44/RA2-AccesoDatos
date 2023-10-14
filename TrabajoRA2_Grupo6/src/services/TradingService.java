@@ -98,6 +98,49 @@ public class TradingService {
         }
     }
 	
+	public static boolean updateTrading(int id, int idProduct, int idProvider, int amount, String type) {
+	    String sql = "UPDATE Trading SET id_product = ?, id_provider = ?, amount = ?, type = ? WHERE id = ?";
+	    try {
+	        // Get the previous Amount before the trade
+	        int previousAmount = getPreviousAmount(id);
+	        int amountChange = amount - previousAmount;
+
+	        // Use the method to update the stock on the data base
+	        updateProductStock(idProduct, amountChange);
+
+	        // Update the trade
+	        PreparedStatement statement = cnn.prepareStatement(sql);
+	        statement.setInt(1, idProduct);
+	        statement.setInt(2, idProvider);
+	        statement.setInt(3, amount);
+	        statement.setString(4, type);
+	        statement.setInt(5, id);
+	        statement.executeUpdate();
+	        return true;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	
+	public static int getPreviousAmount(int id) {
+	    int previousAmount = 0;
+	    String sql = "SELECT amount FROM Trading WHERE id = ?";
+	    try {
+	        PreparedStatement statement = cnn.prepareStatement(sql);
+	        statement.setInt(1, id);
+	        ResultSet resultSet = statement.executeQuery();
+	        if (resultSet.next()) {
+	            previousAmount = resultSet.getInt("amount");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return previousAmount;
+	}
+
+	
 	//Methods to get the product and provider name using their Ids
 	public static String getProviderById(int providerId) {
         String providerName = null;

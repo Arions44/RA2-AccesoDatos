@@ -156,7 +156,6 @@ public class AddTransactionView extends JFrame{
 		                Trading trading = new Trading(productId, providerId, amount, selectedType);
 		                if (TradingService.insertTrading(trading)) {
 		                    JOptionPane.showMessageDialog(null, "Trading added successfully.");
-		                    System.out.println(trading);
 		                } else {
 		                    JOptionPane.showMessageDialog(null, "Error inserting the trading.", "Error", JOptionPane.ERROR_MESSAGE);
 		                }

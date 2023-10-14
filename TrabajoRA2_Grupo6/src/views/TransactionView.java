@@ -3,6 +3,8 @@ package views;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ public class TransactionView extends JFrame{
 	private String selectedFilter = "";
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JDateChooser dateChooser;
+	private int row;
 
 
 	public TransactionView() {
@@ -78,6 +81,22 @@ public class TransactionView extends JFrame{
 		table.setRowSelectionAllowed(true);
 	    table.setDefaultEditor(Object.class, null);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	    
+	    table.getTableHeader().setResizingAllowed(false);
+	    table.getTableHeader().setReorderingAllowed(false);
+	     
+	    table.addMouseListener(new MouseAdapter() {
+	    	public void mouseClicked(MouseEvent e) {
+				
+				row=table.getSelectedRow();
+
+				if(row>=0) {
+					btnUpdate.setEnabled(true);
+				}else {
+					btnUpdate.setEnabled(false);
+				}
+	    	}
+	    });
 	    
 	    JLabel lblFilter = new JLabel("Filter:");
 	    lblFilter.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -113,12 +132,14 @@ public class TransactionView extends JFrame{
 	    btnUpdate.setFont(new Font("Arial", Font.PLAIN, 14));
 	    btnUpdate.setBounds(332, 266, 100, 27);
 	    contentPane.add(btnUpdate);
+	    btnUpdate.setEnabled(false);
 	    
 		ManejadorClass manejador=new ManejadorClass();
 	    btnAdd.addActionListener(manejador);
 		btnBack.addActionListener(manejador);
 		comboBoxFilter.addActionListener(manejador);
 		btnApply.addActionListener(manejador);
+		btnUpdate.addActionListener(manejador);
 		
 		setVisible(true);
 	}
@@ -139,7 +160,7 @@ public class TransactionView extends JFrame{
 	            hv.setVisible(true);
 	            dispose();
 	        } else if(btn==btnUpdate) {
-	        	new UpdateTransactionView();
+	        	UpdateTransactionView upT=new UpdateTransactionView(mapId.get(row));
 	        	dispose();
 	        }else if(btn==btnDownload) {
 	        	new DownloadReportView();
