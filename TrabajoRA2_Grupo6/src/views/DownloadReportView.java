@@ -42,7 +42,7 @@ import javax.swing.JFileChooser;
 public class DownloadReportView extends JFrame{
 
 	private JPanel contentPane;
-	private JButton btnDownload;
+	private JButton btnDownload, btnBack;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JDateChooser dateChooser;
 	private PdfPTable tablesup;
@@ -83,8 +83,13 @@ public class DownloadReportView extends JFrame{
 		btnDownload.setBounds(200, 148, 190, 38);
 		contentPane.add(btnDownload);
 		
+		btnBack = new JButton("Back");
+		btnBack.setBounds(10, 267, 89, 23);
+		contentPane.add(btnBack);
+		
 		ManejadorJButton manejador = new ManejadorJButton();
 		btnDownload.addActionListener(manejador);
+		btnBack.addActionListener(manejador);
 		
 		//iText things:
 	
@@ -98,7 +103,10 @@ public class DownloadReportView extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			Object btn = e.getSource();
 			
-			if(btn==btnDownload) {
+			if(btn == btnBack) {
+				new TransactionView();
+				dispose();
+			}else if(btn==btnDownload) {
 				int result;
 			    Date nowdate = new Date(System.currentTimeMillis());  
 			    Date backday  =  dateChooser.getDate();;
@@ -179,6 +187,4 @@ public class DownloadReportView extends JFrame{
 			tablesup.addCell(t.getType());
 		}
 	}
-	
-	
 }
