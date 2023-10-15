@@ -60,7 +60,8 @@ public class UpdateProductView extends JFrame {
 		Listener l=new Listener();
 		contentPane.setLayout(null);
 		
-		id=i;
+		
+		id=i;//Here I collect the ID of the product that I want to update in order to show its data.
 
 		buttonBack = new JButton("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -152,6 +153,7 @@ public class UpdateProductView extends JFrame {
 		fileData();
 	}
 	
+	//Fill all elements with the data to be updated for the selected product.
 	private void fileData() {
 		for (Product p : ProductServices.selectProduct("id", id)) {
 			name.setText(p.getName());
@@ -169,6 +171,9 @@ public class UpdateProductView extends JFrame {
 		
 	}
 
+	//This method collects all the supplier names to display them in a JComboBox. 
+	//In the event that a product is updated with the removed supplier, the option will be given to 
+	//select the removed supplier in the JComboBox.
 	private void setProviderNames() {
 		
 		ArrayList<Product> p=ProductServices.selectProduct("id", id);
@@ -201,17 +206,7 @@ public class UpdateProductView extends JFrame {
 				ListProductsView lpv=new ListProductsView();
 				lpv.setVisible(true);
 			}else if(o.equals(buttonUpdate)) {
-				if(name.getText().length()==0) {
-					JOptionPane.showMessageDialog(UpdateProductView.this, "The name cannot be empty");
-				}else if(description.getText().length()==0) {
-					JOptionPane.showMessageDialog(UpdateProductView.this, "The description cannot be empty");
-				}else if(price.getText().length()==0) {
-					JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be empty");
-				}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
-					JOptionPane.showMessageDialog(UpdateProductView.this, "Price only permit numbers");
-				}else if(Float.valueOf(price.getText())<=0){
-					JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be 0 or less");
-				}else {
+				if(check()){
 					int option = JOptionPane.showConfirmDialog(UpdateProductView.this, "Are you sure you want to update this product?", "Confirmation", JOptionPane.YES_NO_OPTION);
 					if(option==JOptionPane.YES_OPTION) {
 						if(ProductServices.updateProduct(id,name.getText(),description.getText(),Float.parseFloat(price.getText()),
@@ -235,7 +230,29 @@ public class UpdateProductView extends JFrame {
 			}
 		}
 		
+		//Method to verify that the data entered in the JTextField and the image meet minimum requirements.
+		private boolean check() {
+			if(!name.getText().matches("^.{1,30}$")) {
+				JOptionPane.showMessageDialog(UpdateProductView.this, "The name has to be between 1 and 30 long");
+				return false;
+			}else if(!description.getText().matches("^.{1,50}$")) {
+				JOptionPane.showMessageDialog(UpdateProductView.this, "The description has to be between 1 and 50 long");
+				return false;
+			}else if(price.getText().length()==0) {
+				JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be empty");
+				return false;
+			}else if(!price.getText().matches("[+-]?([0-9]*[.])?[0-9]+")) {
+				JOptionPane.showMessageDialog(UpdateProductView.this, "Price only permit numbers");
+				return false;
+			}else if(Float.valueOf(price.getText())<=0){
+				JOptionPane.showMessageDialog(UpdateProductView.this, "The price cannot be 0 or less");
+				return false;
+			}
+			return true;
+		}
 	}
+	
+	//Method to add image
 	public String bringFileChooserImage() {
 		
 		JFileChooser fc=new JFileChooser();
@@ -273,6 +290,7 @@ public class UpdateProductView extends JFrame {
 	    return path;
 	}
 	
+	//Method to recover the id of each provider to be able to add to the database.
 	 private static int getKeyFromValue(String value) {
 	        for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
 	            if (entry.getValue().equals(value)) {

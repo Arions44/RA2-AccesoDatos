@@ -329,7 +329,7 @@ public class CreateProductView extends JFrame {
 	    return path;
 	}
 	
-	//Method to recover the id of each supplier to be able to add to the database.
+	//Method to recover the id of each provider to be able to add to the database.
 	private static int getKeyFromValue(String value) {
 	        for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
 	            if (entry.getValue().equals(value)) {
