@@ -51,7 +51,7 @@ public class UpdateProductView extends JFrame {
 	
 	public UpdateProductView(int i) {
 		setBounds(100, 100, 600, 440);
-		InterfaceModel.FrameModel(this, "Products");
+		InterfaceModel.FrameModel(this, "Update product");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 

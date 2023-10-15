@@ -34,7 +34,7 @@ public class UpdateTransactionView extends JFrame{
 	public UpdateTransactionView(int row) {
 		id=row;
 		setBounds(100, 100, 600, 340);
-		InterfaceModel.FrameModel(this, "Add Transaction");
+		InterfaceModel.FrameModel(this, "Update Transaction");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
