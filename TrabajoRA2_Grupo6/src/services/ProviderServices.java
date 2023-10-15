@@ -130,7 +130,7 @@ public class ProviderServices {
 	
 	public static ArrayList<Integer> getProviderIds() { //get id from provider for product and transactions
 	    ArrayList<Integer> providerIds = new ArrayList<Integer>();
-	    String sql = "SELECT id FROM Provider";
+	    String sql = "SELECT id FROM Provider WHERE active = 1";
 	    
 	    try {
 	        Statement statement = conn.createStatement();

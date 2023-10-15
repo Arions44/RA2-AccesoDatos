@@ -191,9 +191,9 @@ public class ProductServices {
 	    String sql = "SELECT id FROM Product";
 	    
 	    if (type.equalsIgnoreCase("buy")) {
-	        sql += ";";
+	        sql += " WHERE available = 1;";
 	    } else if (type.equalsIgnoreCase("sell")) {
-	        sql += " WHERE stock > 0;";
+	        sql += " WHERE available = 1 AND stock > 0;";
 	    } else {
 	        return productIds;
 	    }
