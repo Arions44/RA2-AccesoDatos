@@ -50,7 +50,7 @@ public class UpdateProductView extends JFrame {
 	
 	
 	public UpdateProductView(int i) {
-		setBounds(100, 100, 600, 440);
+		setBounds(100, 100, 600, 390);
 		InterfaceModel.FrameModel(this, "Update product");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -62,10 +62,12 @@ public class UpdateProductView extends JFrame {
 		
 		
 		id=i;//Here I collect the ID of the product that I want to update in order to show its data.
-
-		buttonBack = new JButton("Back");
+		
+		ImageIcon back=new ImageIcon("resources/icon/Back.png");
+		buttonBack = new JButton(back);
+		buttonBack.setToolTipText("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		buttonBack.setBounds(10, 346, 96, 21);
+		buttonBack.setBounds(10, 309, 35, 35);
 		buttonBack.addActionListener(l);
 		contentPane.add(buttonBack);
 		

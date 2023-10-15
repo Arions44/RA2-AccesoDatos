@@ -17,14 +17,14 @@ public class ProductServices {
 	static Connection conn=AzureSql.createConnection();
 	static ResultSet resultSet=null;
 	
-	public static boolean insertProduct(Product p) {
+	public static boolean insertProduct(Product p) {//Insert into table by a given product
 		
 		
 		String sql="INSERT INTO Product VALUES("+p.getId()+", \'"+p.getName()+"\', \'"+p.getDescription()+"\', "+p.getPrice()
 				+", \'"+p.getCategory()+"\', \'"+p.getImage()+"\', "+p.getStock()+", "+p.getId_provider()+", "+p.getAvailable()+");";
 		try {
-			PreparedStatement statement=conn.prepareStatement(sql);
-			statement.execute();
+			PreparedStatement statement=conn.prepareStatement(sql);////Prepare sql query
+			statement.execute();//Execution of the prepared query
 			return true;
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class ProductServices {
 		return id+1;
 	}
 	
-	
+	//Return products by a given field and value when filtered or return every product when parameters are null
 	public static ArrayList<Product> selectProduct(String field, Object value){
 		
 		ArrayList<Product> products = new ArrayList<Product>();
@@ -100,6 +100,7 @@ public class ProductServices {
 		return productIdName;
 	}
 	
+	//This method returns the image searching through an id
 	public static String selectImageProduct(int value){
 		
 		ResultSet resultSet = null;
@@ -119,6 +120,7 @@ public class ProductServices {
 		return img;
 	}
 	
+	//Delete product by id
 	public static boolean deleteProduct(int id) {
 		
 		String sql = "UPDATE Product SET available = "+0+" WHERE id = "+id+";";
@@ -133,6 +135,7 @@ public class ProductServices {
 		}
 	}
 	
+	//Update product
 	public static boolean updateProduct(int id, String name, String description, float price, String category, String image, int idProvider, int available) {
 		
 		String sql = "UPDATE Product SET name = \'"+name+"\', description = \'"+description+"\', price = "+price+

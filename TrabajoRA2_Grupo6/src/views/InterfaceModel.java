@@ -16,8 +16,4 @@ public class InterfaceModel {
 		jf.setIconImage(icon1);
 		
 	}
-	
-	public static void ButtonModel(JButton jb) {
-		
-	}
 }

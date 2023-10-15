@@ -45,7 +45,7 @@ public class ListProductsView extends JFrame {
 	private JComboBox typeFilter;
 
 	public ListProductsView() {
-		setBounds(100, 100, 790, 480);
+		setBounds(100, 100, 864, 482);
 		InterfaceModel.FrameModel(this, "Products");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -56,35 +56,43 @@ public class ListProductsView extends JFrame {
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(21, 81, 525, 267);
+		scrollPane.setBounds(21, 81, 603, 267);
 		contentPane.add(scrollPane);
 		
 		table = new JTable(Model(null,null));
 		scrollPane.setViewportView(table);
 		
-		buttonBack = new JButton("Back");
+		ImageIcon back=new ImageIcon("resources/icon/Back.png");
+		buttonBack = new JButton(back);
+		buttonBack.setToolTipText("Back");
 		buttonBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		buttonBack.setBounds(10, 417, 68, 21);
+		buttonBack.setBounds(10, 403, 35, 35);
 		buttonBack.addActionListener(l);
 		getContentPane().add(buttonBack);
 		
-		buttonUpdate = new JButton("Update");
+		ImageIcon update=new ImageIcon("resources/icon/Update.png");
+		buttonUpdate = new JButton(update);
+		buttonUpdate.setToolTipText("Update");
 		buttonUpdate.setFont(new Font("Arial", Font.PLAIN, 14));
-		buttonUpdate.setBounds(281, 374, 100, 40);
+		buttonUpdate.setBounds(281, 374, 47, 47);
 		buttonUpdate.addActionListener(l);
 		getContentPane().add(buttonUpdate);
 		buttonUpdate.setEnabled(false);
 		
-		buttonDelete = new JButton("Delete");
+		ImageIcon delete=new ImageIcon("resources/icon/Delete.png");
+		buttonDelete = new JButton(delete);
+		buttonDelete.setToolTipText("Delete");
 		buttonDelete.setFont(new Font("Arial", Font.PLAIN, 14));
-		buttonDelete.setBounds(113, 374, 100, 40);
+		buttonDelete.setBounds(113, 374, 47, 47);
 		buttonDelete.addActionListener(l);
 		getContentPane().add(buttonDelete);
 		buttonDelete.setEnabled(false);
 		
-		buttonCreate = new JButton("Create");
+		ImageIcon add=new ImageIcon("resources/icon/Add.png");
+		buttonCreate = new JButton(add);
+		buttonCreate.setToolTipText("Create");
 		buttonCreate.setFont(new Font("Arial", Font.PLAIN, 14));
-		buttonCreate.setBounds(450, 373, 100, 40);
+		buttonCreate.setBounds(450, 373, 47, 47);
 		buttonCreate.addActionListener(l);
 		getContentPane().add(buttonCreate);
 		
@@ -94,7 +102,7 @@ public class ListProductsView extends JFrame {
 	     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	     
 	     image = new JLabel("");
-	     image.setBounds(569, 122, 184, 160);
+	     image.setBounds(645, 120, 195, 169);
 	     contentPane.add(image);
 	     
 	     labelFilter = new JLabel("Filter:");
