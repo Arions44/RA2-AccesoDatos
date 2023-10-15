@@ -154,11 +154,12 @@ public class ListProductsView extends JFrame {
 	     
 	}
 	
+	//Method to create and add data from the database to the table. The parameters it has are used to apply search filters.
 	private TableModel Model(String field, Object value) {
         
         DefaultTableModel modelo = new DefaultTableModel(colum, 0);
-        mapId=new HashMap<Integer,Integer>(); 
-        providerIdName = ProviderServices.selectProviderName(null, 0,false);
+        mapId=new HashMap<Integer,Integer>(); //This map associates the number of rows to each product id.
+        providerIdName = ProviderServices.selectProviderName(null, 0,false); //This map collects the id and name of the supplier
         int count=0;
         for (Product p : ProductServices.selectProduct(field, value)) {
         	if(p.getAvailable()==1) {
@@ -193,6 +194,7 @@ public class ListProductsView extends JFrame {
 				if(option==JOptionPane.YES_OPTION) {
 					if(ProductServices.deleteProduct(mapId.get(row))) {
 						image.setIcon(null);
+						//Updates the table once a product is deleted, depending on whether there is a filter or not, one action or another is performed.
 						if(active) {
 							if(typeFilter.getSelectedItem().equals("Provider name")) {
 								table.setModel(Model((String)typeFilter.getSelectedItem(),getKeyFromValue(filter.getText())));
@@ -216,8 +218,8 @@ public class ListProductsView extends JFrame {
 				
 			}else if(o.equals(buttonApply)) {
 				if(filter.getText().length()>0) {
+					//Apply filters according to the type of element selected, if the filter is for the name of suppliers, the getKeyFromValue method is required.
 					active=true;
-					
 					if(typeFilter.getSelectedItem().equals("Provider name")) {
 						table.setModel(Model("id_provider",getKeyFromValue(filter.getText())));
 					}else {
@@ -234,6 +236,7 @@ public class ListProductsView extends JFrame {
 					JOptionPane.showMessageDialog(ListProductsView.this, "You have not applied any filter!");
 				
 			}else if(o.equals(buttonReset)) {
+				//Resets the filter, emptying the field and updating the table.
 				active=false;
 				table.setModel(Model(null,null));
 				filter.setText("");
@@ -244,6 +247,7 @@ public class ListProductsView extends JFrame {
 		}
 	}
 	
+	//Method used when applying filters on supplier names, it is necessary to search for names based on the IDs of the providers that have the products
 	private static int getKeyFromValue(String value) {
         for (Map.Entry<Integer, String> entry : providerIdName.entrySet()) {
             if (entry.getValue().equals(value)) {
