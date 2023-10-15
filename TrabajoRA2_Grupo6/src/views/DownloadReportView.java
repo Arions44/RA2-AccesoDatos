@@ -141,6 +141,7 @@ public class DownloadReportView extends JFrame{
 				            cell.setBackgroundColor(BaseColor.ORANGE);
 				            tablesup.addCell(cell);
 	
+				            
 				            tablesup.addCell("Product Name");
 				            tablesup.addCell("Provider Name");
 				            tablesup.addCell("Amount");
