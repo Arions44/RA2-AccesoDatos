@@ -12,6 +12,8 @@ import javax.swing.JTextField;
 
 import models.Provider;
 import services.ProviderServices;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Font;
 
@@ -44,57 +46,63 @@ public class ProviderView extends JFrame {
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblName.setBounds(82, 84, 46, 14);
+		lblName.setBounds(82, 75, 46, 14);
 		getContentPane().add(lblName);
 		
 		JLabel lblDescription = new JLabel("Description");
 		lblDescription.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblDescription.setBounds(82, 118, 78, 14);
+		lblDescription.setBounds(82, 109, 78, 14);
 		getContentPane().add(lblDescription);
 		
 		JLabel lblAddress = new JLabel("Address");
 		lblAddress.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblAddress.setBounds(82, 154, 78, 14);
+		lblAddress.setBounds(82, 145, 78, 14);
 		getContentPane().add(lblAddress);
 		
 		JLabel lblPhone = new JLabel("Phone");
 		lblPhone.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblPhone.setBounds(82, 189, 78, 14);
+		lblPhone.setBounds(82, 180, 78, 14);
 		getContentPane().add(lblPhone);
 		
 		textName = new JTextField();
-		textName.setBounds(170, 82, 138, 20);
+		textName.setBounds(170, 73, 138, 20);
 		getContentPane().add(textName);
 		textName.setColumns(10);
 		
 		textDescription = new JTextField();
 		textDescription.setColumns(10);
-		textDescription.setBounds(170, 116, 138, 20);
+		textDescription.setBounds(170, 107, 138, 20);
 		getContentPane().add(textDescription);
 		
 		textAddress = new JTextField();
 		textAddress.setColumns(10);
-		textAddress.setBounds(170, 152, 138, 20);
+		textAddress.setBounds(170, 143, 138, 20);
 		getContentPane().add(textAddress);
 		
 		textPhone = new JTextField();
 		textPhone.setColumns(10);
-		textPhone.setBounds(170, 187, 138, 20);
+		textPhone.setBounds(170, 178, 138, 20);
 		getContentPane().add(textPhone);
 		
-		btnBack = new JButton("Back");
-		btnBack.setBounds(49, 245, 89, 23);
+		ImageIcon back=new ImageIcon("resources/icon/back.png");
+		btnBack = new JButton(back);
+		btnBack.setToolTipText("Back");
+		btnBack.setBounds(50, 233, 35, 35);
 		getContentPane().add(btnBack);
 		btnBack.addActionListener(l);
 		
-		btnEdit = new JButton("Edit");
-		btnEdit.setBounds(262, 245, 89, 23);
+		ImageIcon edit=new ImageIcon("resources/icon/update.png");
+		btnEdit = new JButton(edit);
+		btnEdit.setToolTipText("Edit");
+		btnEdit.setBounds(261, 218, 47, 47);
 		getContentPane().add(btnEdit);
 		btnEdit.addActionListener(l);
 		btnEdit.setVisible(false);
 		
-		btnSave = new JButton("Save");
-		btnSave.setBounds(262, 245, 89, 23);
+		ImageIcon save=new ImageIcon("resources/icon/save.png");
+		btnSave = new JButton(save);
+		btnSave.setToolTipText("Save");
+		btnSave.setBounds(261, 218, 47, 47);
 		getContentPane().add(btnSave);
 		btnSave.addActionListener(l);
 		

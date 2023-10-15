@@ -13,6 +13,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import models.Provider;
 import services.ProviderServices;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -56,29 +58,37 @@ public class ListProvidersView extends JFrame {
 		table = new JTable(UpdateTable(null ,null));
 		scrollPane.setViewportView(table);
 		
-		btnBack = new JButton("Back");
+		ImageIcon back=new ImageIcon("resources/icon/Back.png");
+		btnBack = new JButton(back);	
+		btnBack.setToolTipText("Back");
 		btnBack.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnBack.setBounds(10, 417, 68, 21);
+		btnBack.setBounds(10, 395, 35, 35);
 		btnBack.addActionListener(l);
-		getContentPane().add(btnBack);
+		getContentPane().add(btnBack);	
 		
-		btnView = new JButton("View");
+		ImageIcon view=new ImageIcon("resources/icon/search.png");
+		btnView = new JButton(view);
+		btnView.setToolTipText("view");
 		btnView.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnView.setBounds(281, 374, 100, 40);
+		btnView.setBounds(281, 374, 47, 47);
 		btnView.addActionListener(l);
 		getContentPane().add(btnView);
 		btnView.setEnabled(false);
 		
-		btnDelete = new JButton("Delete");
+		ImageIcon delete=new ImageIcon("resources/icon/Delete.png");
+		btnDelete = new JButton(delete);
+		btnDelete.setToolTipText("Delete");
 		btnDelete.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnDelete.setBounds(113, 374, 100, 40);
+		btnDelete.setBounds(113, 374, 47, 47);
 		btnDelete.addActionListener(l);
 		getContentPane().add(btnDelete);
 		btnDelete.setEnabled(false);
 		
-		btnCreate = new JButton("Create");
+		ImageIcon create=new ImageIcon("resources/icon/Add.png");
+		btnCreate = new JButton(create);
+		btnCreate.setToolTipText("Create");
 		btnCreate.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnCreate.setBounds(450, 373, 100, 40);
+		btnCreate.setBounds(450, 373, 47, 47);
 		btnCreate.addActionListener(l);
 		getContentPane().add(btnCreate);
 		
