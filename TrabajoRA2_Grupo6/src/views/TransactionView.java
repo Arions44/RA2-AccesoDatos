@@ -140,6 +140,7 @@ public class TransactionView extends JFrame{
 		comboBoxFilter.addActionListener(manejador);
 		btnApply.addActionListener(manejador);
 		btnUpdate.addActionListener(manejador);
+		btnDownload.addActionListener(manejador);
 		
 		setVisible(true);
 	}

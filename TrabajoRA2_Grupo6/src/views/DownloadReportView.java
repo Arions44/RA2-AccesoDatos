@@ -2,6 +2,7 @@ package views;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import com.itextpdf.text.BaseColor;
@@ -16,9 +17,12 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 import models.Product;
+import models.Trading;
 import services.ProductServices;
+import services.TradingService;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,7 +45,7 @@ public class DownloadReportView extends JFrame{
 	private JButton btnDownload;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JDateChooser dateChooser;
-	
+	private PdfPTable tablesup;
 
 
 	public DownloadReportView() {
@@ -61,6 +65,11 @@ public class DownloadReportView extends JFrame{
 		dateChooser = new JDateChooser();
         dateChooser.setBounds(224, 88, 146, 38);
         contentPane.add(dateChooser);
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateChooser.setDateFormatString("dd/MM/yyyy");
+        JTextFieldDateEditor editor = (JTextFieldDateEditor) dateChooser.getDateEditor();
+        editor.setHorizontalAlignment(JTextField.RIGHT);
 		
 		JLabel lblDescription = new JLabel("Choose a date:");
 		lblDescription.setHorizontalAlignment(SwingConstants.CENTER);
@@ -91,9 +100,8 @@ public class DownloadReportView extends JFrame{
 			
 			if(btn==btnDownload) {
 				int result;
-
 			    Date nowdate = new Date(System.currentTimeMillis());  
-			    Date backday  =  ;
+			    Date backday  =  dateChooser.getDate();;
 
 
 			    if(backday==null){//checking the date is null or not
@@ -112,36 +120,38 @@ public class DownloadReportView extends JFrame{
 		            chooser.setAcceptAllFileFilterUsed(false);
 
 			            
-			        if(chooser.showSaveDialog(this)==JFileChooser.APPROVE_OPTION){
+			        if(chooser.showSaveDialog(DownloadReportView.this)==JFileChooser.APPROVE_OPTION){
 
 
 			            try {
 			                Document pdfsup = new Document();
-			                PdfWriter.getInstance(pdfsup, new FileOutputStream(new File(chooser.getSelectedFile(), "Inventory Movements Report.pdf")));
+			                PdfWriter.getInstance(pdfsup, new FileOutputStream(new File(chooser.getSelectedFile(), "Inventory_Movements.pdf")));
 
 			                pdfsup.open();
 
-			            pdfsup.add(new Paragraph("Supplier Details Report",FontFactory.getFont(FontFactory.TIMES_BOLD, 18, Font.BOLD, BaseColor.BLUE)));
-			            pdfsup.add(new Paragraph(new Date().toString()));
-			            pdfsup.add(new Paragraph("----------------------------------------------------------------------------------------------------------------"));
-
-			            PdfPTable tablesup= new PdfPTable(2);
-
-			            PdfPCell cell = new PdfPCell(new Paragraph("Title"));
-			            cell.setColspan(4);
-			            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			            cell.setBackgroundColor(BaseColor.ORANGE);
-			            tablesup.addCell(cell);
-
-			            tablesup.addCell("Supplier ID");
-			            tablesup.addCell("Supplier ID2");
-			            tablesup.addCell("Supplier ID3");
-			            tablesup.addCell("Supplier ID4");
-			            pdfsup.add(tablesup);
-
-			            pdfsup.close();
-
-			            JOptionPane.showMessageDialog(null, "Report Saved...");
+				            pdfsup.add(new Paragraph("Inventory Movements Report",FontFactory.getFont(FontFactory.TIMES_BOLD, 18, Font.BOLD, BaseColor.BLUE)));
+				            pdfsup.add(new Paragraph(new Date().toString()));
+				            pdfsup.add(new Paragraph("----------------------------------------------------------------------------------------------------------------"));
+	
+				            tablesup= new PdfPTable(5);
+	
+				            PdfPCell cell = new PdfPCell(new Paragraph("Movements:"));
+				            cell.setColspan(5);
+				            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				            cell.setBackgroundColor(BaseColor.ORANGE);
+				            tablesup.addCell(cell);
+	
+				            tablesup.addCell("Product Name");
+				            tablesup.addCell("Provider Name");
+				            tablesup.addCell("Amount");
+				            tablesup.addCell("Date");
+				            tablesup.addCell("Type");
+				            insertCell(TradingService.getReportData(backday, nowdate));
+				            pdfsup.add(tablesup);
+	
+				            pdfsup.close();
+	
+				            JOptionPane.showMessageDialog(null, "Report Saved...");
 
 
 			            } catch (Exception ex) {
@@ -154,6 +164,19 @@ public class DownloadReportView extends JFrame{
 			}
 		}
 		
+	}
+	
+	private void insertCell (ArrayList<Trading> trades) {
+		for (Trading t : trades) {
+			String productName = TradingService.getProductById(t.getId_product());
+			tablesup.addCell(productName);
+			String providerName = TradingService.getProviderById(t.getId_provider());
+			tablesup.addCell(providerName);
+			tablesup.addCell(String.valueOf(t.getAmount()));
+			String formattedDate = dateFormat.format(t.getDate());
+			tablesup.addCell(formattedDate);
+			tablesup.addCell(t.getType());
+		}
 	}
 	
 	

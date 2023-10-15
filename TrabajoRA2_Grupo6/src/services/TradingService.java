@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
 
@@ -75,7 +76,8 @@ public class TradingService {
 				Statement statement = cnn.createStatement();
 				resultSet = statement.executeQuery(sql);
 				while(resultSet.next()) {
-					trades.add(new Trading(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getString(5), resultSet.getString(6)));
+					trades.add(new Trading(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4),
+							resultSet.getString(5), resultSet.getString(6)));
 				}
 				
 			} catch (SQLException e) {
@@ -207,6 +209,29 @@ public class TradingService {
 	        e.printStackTrace();
 	    }
 	    return providerId;
+	}
+	
+	
+	public static ArrayList<Trading> getReportData(Date backdate, Date nowdate) {
+	    ArrayList<Trading> reportData = new ArrayList<>();
+	    
+	    String sql = "SELECT * FROM Trading WHERE date BETWEEN ? AND ?";
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    try {
+	        PreparedStatement statement = cnn.prepareStatement(sql);
+	        statement.setString(1, dateFormat.format(backdate));
+	        statement.setString(2, dateFormat.format(nowdate));
+	        ResultSet resultSet = statement.executeQuery();
+
+	        while (resultSet.next()) {
+	        	reportData.add(new Trading(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4),
+						resultSet.getString(5), resultSet.getString(6)));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return reportData;
 	}
 
 	
