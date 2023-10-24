@@ -118,7 +118,7 @@ public class RegisterView extends JFrame {
 		}
 
 		private boolean MatchesUser(String user) {
-			if(!user.matches("^(.)\\s(.)")) {
+			if(!user.matches("\\s+")) {
 				JOptionPane.showMessageDialog(RegisterView.this, "User cannot have spaces");
 				return false;
 			}
